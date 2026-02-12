@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { hashPassword } from "../utils/password.utils.js";
 import { RegisterUserSchema } from "@projo/contracts";
-
+import * as z from "zod";
 export async function registerUser(
   req: Request,
   res: Response,
@@ -11,7 +11,9 @@ export async function registerUser(
     // validate user input.
     const parsed = RegisterUserSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ error: parsed.error.message });
+      const { fieldErrors } = z.flattenError(parsed.error);
+      const messages = [...Object.values(fieldErrors).flat()];
+      return res.status(400).json({ error: messages });
     }
     const userData = parsed.data;
 
@@ -34,8 +36,11 @@ export async function registerUser(
         email: userData.email,
         password: hashedPassword,
       },
-      omit: {
-        password: true,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
       },
     });
 
