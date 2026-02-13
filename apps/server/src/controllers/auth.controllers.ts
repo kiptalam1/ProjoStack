@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
 import { RegisterUserSchema } from "@projo/contracts";
 import * as z from "zod";
+import { generateAccessToken } from "../utils/token.utils.js";
 
 // register user logic;
 export async function registerUser(
@@ -83,7 +84,18 @@ export async function loginUser(
       return res.status(400).json({ error: "Wrong password!" });
     }
 
-    // provide jwt token;
+    //generate jwt access token and attach;
+    const accessToken = generateAccessToken({
+      id: userFound.id,
+      role: userFound.role,
+    });
+
+    res.cookie("accessToken", accessToken, {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+      httpOnly: true,
+    });
 
     // return logged in user if success
     const { password: _, ...safeUser } = userFound;
