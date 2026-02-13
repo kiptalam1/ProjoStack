@@ -11,6 +11,8 @@ const app = express();
 
 //middlewares
 app.use(express.json());
+app.use(helmet({}));
+app.use(cors());
 //
 // routes
 app.use("/api/auth", authRoutes);
