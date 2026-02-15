@@ -5,6 +5,7 @@ import {
   RegisterUserSchema,
   LoginUserSchema,
   type LoginUserData,
+  type RegisterUserData,
 } from "@projo/contracts";
 import * as z from "zod";
 import { generateAccessToken } from "../utils/token.utils.js";
@@ -22,7 +23,7 @@ export async function registerUser(
       const messages = [...Object.values(fieldErrors).flat()];
       return res.status(400).json({ error: messages });
     }
-    const userData = parsed.data;
+    const userData = parsed.data satisfies RegisterUserData;
 
     // check if user is already registered;
     const user = await prisma.user.findUnique({
@@ -77,7 +78,8 @@ export async function loginUser(
       const messages = [...Object.values(fieldErrors).flat()];
       return res.status(400).json({ error: messages });
     }
-    const userData = parsed.data;
+    const userData = parsed.data satisfies LoginUserData;
+
     //check if email exists;
     const userFound = await prisma.user.findUnique({
       where: { email: userData.email },
@@ -95,7 +97,7 @@ export async function loginUser(
       userFound?.password,
     );
     if (!isValidPassword) {
-      return res.status(400).json({ error: "Wrong password!" });
+      return res.status(401).json({ error: "Invalid email or password!" });
     }
 
     //generate jwt access token and attach;
