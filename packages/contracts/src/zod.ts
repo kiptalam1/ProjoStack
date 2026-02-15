@@ -21,7 +21,7 @@ export const RegisterUserSchema = z.object({
 });
 
 export const LoginUserSchema = z.object({
-  email: z.email({ error: "Ebter a valid email." }).trim().toLowerCase(),
+  email: z.email({ error: "Enter a valid email." }).trim().toLowerCase(),
   password: z
     .string({ error: "Password must be a string." })
     .min(8, { error: "Password must be at least 8 characters long." })

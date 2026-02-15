@@ -69,7 +69,7 @@ export async function loginUser(
 ): Promise<Response | void> {
   try {
     // get and validate user input;
-    const { email, password } = req.body;
+
     const parsed = LoginUserSchema.safeParse(req.body);
 
     if (!parsed.success) {
@@ -90,7 +90,7 @@ export async function loginUser(
     }
 
     // if email exists, check if password is correct;
-    const isValidPassword = comparePassword(
+    const isValidPassword = await comparePassword(
       userData.password,
       userFound?.password,
     );
