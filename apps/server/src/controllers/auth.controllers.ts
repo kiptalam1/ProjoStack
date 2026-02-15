@@ -8,7 +8,11 @@ import {
   type RegisterUserData,
 } from "@projo/contracts";
 import * as z from "zod";
-import { generateAccessToken } from "../utils/token.utils.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  attachCookie,
+} from "../utils/token.utils.js";
 
 // register user logic;
 export async function registerUser(
@@ -105,13 +109,14 @@ export async function loginUser(
       id: userFound.id,
       role: userFound.role,
     });
+    attachCookie("accessToken", accessToken, res);
 
-    res.cookie("accessToken", accessToken, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 15 * 60 * 1000,
-      httpOnly: true,
+    // generate jwt refresh token, attach and save to db;
+    const refreshToken = generateRefreshToken({
+      id: userFound.id,
+      role: userFound.role,
     });
+    attachCookie("refreshToken", refreshToken, res);
 
     // return logged in user if success
     const { password: _, ...safeUser } = userFound;
