@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
+import jwt from "jsonwebtoken";
 import {
   RegisterUserSchema,
   LoginUserSchema,
@@ -12,6 +13,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
   attachCookie,
+  type Payload,
 } from "../utils/token.utils.js";
 
 // register user logic;
@@ -117,7 +119,15 @@ export async function loginUser(
       role: userFound.role,
     });
     attachCookie("refreshToken", refreshToken, res);
-
+    await prisma.user.update({
+      where: {
+        email: userFound.email,
+        id: userFound.id,
+      },
+      data: {
+        refreshToken: refreshToken,
+      },
+    });
     // return logged in user if success
     const { password: _, ...safeUser } = userFound;
     return res.status(200).json({
@@ -143,4 +153,39 @@ export async function logoutUser(
     httpOnly: true,
   });
   return res.status(200).json({ message: "Logged out successfully." });
+}
+
+// refresh token;
+export async function renewAccessToken(
+  req: Request,
+  res: Response,
+): Promise<Response | void> {
+  // check whether refresh token exists;
+  const savedRefreshToken: string = req.cookies.refreshToken;
+  if (!savedRefreshToken) {
+    return res.status(401).json({ error: "Unauthorized!" });
+  }
+  try {
+    // verify token if valid;
+    const payload = jwt.verify(
+      savedRefreshToken,
+      process.env.REFRESH_SECRET as string,
+    ) as Payload;
+
+    // generate new access token and attach to cookie;
+    const newAccessToken = generateAccessToken(payload);
+    attachCookie("accessToken", newAccessToken, res);
+
+    // also generate new refresh token to rotate;
+    const newRefreshToken = generateRefreshToken(payload);
+    attachCookie("refreshToken", newRefreshToken, res);
+    await prisma.user.update({
+      where: { id: payload.id },
+      data: {
+        refreshToken: newRefreshToken,
+      },
+    });
+  } catch (error: unknown) {
+    return res.status(401).json({ error: "Unauthorized!" });
+  }
 }
