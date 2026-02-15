@@ -1,7 +1,11 @@
 import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
-import { RegisterUserSchema } from "@projo/contracts";
+import {
+  RegisterUserSchema,
+  LoginUserSchema,
+  type LoginUserData,
+} from "@projo/contracts";
 import * as z from "zod";
 import { generateAccessToken } from "../utils/token.utils.js";
 
@@ -66,10 +70,17 @@ export async function loginUser(
   try {
     // get and validate user input;
     const { email, password } = req.body;
+    const parsed = LoginUserSchema.safeParse(req.body);
 
+    if (!parsed.success) {
+      const { fieldErrors } = z.flattenError(parsed.error);
+      const messages = [...Object.values(fieldErrors).flat()];
+      return res.status(400).json({ error: messages });
+    }
+    const userData = parsed.data;
     //check if email exists;
     const userFound = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email: userData.email },
     });
 
     if (!userFound) {
@@ -79,7 +90,10 @@ export async function loginUser(
     }
 
     // if email exists, check if password is correct;
-    const isValidPassword = comparePassword(password, userFound?.password);
+    const isValidPassword = comparePassword(
+      userData.password,
+      userFound?.password,
+    );
     if (!isValidPassword) {
       return res.status(400).json({ error: "Wrong password!" });
     }

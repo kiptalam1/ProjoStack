@@ -20,4 +20,16 @@ export const RegisterUserSchema = z.object({
     .regex(/[0-9]/, "Password must contain a number"),
 });
 
+export const LoginUserSchema = z.object({
+  email: z.email({ error: "Ebter a valid email." }).trim().toLowerCase(),
+  password: z
+    .string({ error: "Password must be a string." })
+    .min(8, { error: "Password must be at least 8 characters long." })
+    .max(72, { error: "Password is too long!" })
+    .regex(/[a-z]/, "Password must contain a lowercase letter")
+    .regex(/[A-Z]/, "Password must contain a uppercase letter")
+    .regex(/[0-9]/, "Password must contain a number"),
+});
+
 export type RegisterUserData = z.infer<typeof RegisterUserSchema>;
+export type LoginUserData = z.infer<typeof LoginUserSchema>;
