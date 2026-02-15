@@ -126,3 +126,16 @@ export async function loginUser(
     });
   }
 }
+
+// user logout functionality;
+export async function logoutUser(
+  _req: Request,
+  res: Response,
+): Promise<Response | void> {
+  res.clearCookie("accessToken", {
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    httpOnly: true,
+  });
+  return res.status(200).json({ message: "Logged out successfully." });
+}
