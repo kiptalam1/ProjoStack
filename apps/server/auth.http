@@ -21,7 +21,10 @@ Content-Type: application/json
 }
 
 ###
+# @attach-cookie-jar
 POST http://localhost:5000/api/auth/logout
 
 ### 
+# @attach-cookie-jar
 POST http://localhost:5000/api/auth/refresh-token
+

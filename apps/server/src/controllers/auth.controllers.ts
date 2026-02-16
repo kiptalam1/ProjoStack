@@ -7,7 +7,7 @@ import {
 import { prisma } from "../lib/prisma.js";
 import { comparePassword, hashPassword } from "../utils/password.utils.js";
 import jwt from "jsonwebtoken";
-dotenv.config()
+dotenv.config();
 import {
   RegisterUserSchema,
   LoginUserSchema,
@@ -219,24 +219,27 @@ export async function renewAccessToken(
       select: { refreshToken: true, role: true },
     });
 
+    if (!user?.refreshToken) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
     //reject if token was rotated/logged out;
     const isValidRefreshToken = await compareRefreshTokens(
       savedRefreshToken,
       user?.refreshToken as string,
     );
-    if (!user || !user?.refreshToken || !isValidRefreshToken) {
+    if (!isValidRefreshToken) {
       return res.status(401).json({ error: "Unauthorized!" });
     }
 
     // generate new access token;
     const newAccessToken = generateAccessToken({
       id: payload.id,
-      role: user.role,
+      role: payload.role,
     });
     // also generate new refresh token to rotate;
     const newRefreshToken = generateRefreshToken({
       id: payload.id,
-      role: user.role,
+      role: payload.role,
     });
     attachCookie("accessToken", newAccessToken, res);
     attachCookie("refreshToken", newRefreshToken, res, {
@@ -252,6 +255,7 @@ export async function renewAccessToken(
         refreshToken: hashedRefreshToken,
       },
     });
+
     return res
       .status(200)
       .json({ message: "Token renewed and cookie attached" });
