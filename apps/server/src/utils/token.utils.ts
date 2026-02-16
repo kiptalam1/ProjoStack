@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { Role } from "@prisma/client";
 import type { Response } from "express";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import dotenv from "dotenv";
 dotenv.config();
 export type Payload = {
@@ -19,7 +20,10 @@ export function generateAccessToken({ id, role }: Payload): string {
 }
 
 export function generateRefreshToken({ id, role }: Payload): string {
-  return jwt.sign({ id, role }, refreshSecret, { expiresIn: "7d" });
+  return jwt.sign({ id, role }, refreshSecret, {
+    expiresIn: "7d",
+    jwtid: crypto.randomUUID(),
+  });
 }
 
 export function attachCookie(

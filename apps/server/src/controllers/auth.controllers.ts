@@ -125,7 +125,7 @@ export async function loginUser(
       role: userFound.role,
     });
     attachCookie("refreshToken", refreshToken, res, {
-      path: "/api/auth/refresh-token",
+      path: "/api/auth",
       maxAgeMs: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -164,17 +164,19 @@ export async function logoutUser(
     try {
       const decoded = jwt.verify(refresh, process.env.REFRESH_SECRET as string);
       if (typeof decoded !== "string") {
-        const { id } = decoded as Payload;
+        const payload = decoded as Payload;
         await prisma.user.update({
           where: {
-            id: id,
+            id: payload?.id,
           },
           data: {
             refreshToken: null,
           },
         });
       }
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   }
   res.clearCookie("accessToken", {
     secure: process.env.NODE_ENV === "production",
@@ -186,7 +188,7 @@ export async function logoutUser(
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     httpOnly: true,
-    path: "/api/auth/refresh-token",
+    path: "/api/auth",
   });
   return res.status(200).json({ message: "Logged out successfully." });
 }
@@ -234,16 +236,16 @@ export async function renewAccessToken(
     // generate new access token;
     const newAccessToken = generateAccessToken({
       id: payload.id,
-      role: payload.role,
+      role: user.role,
     });
     // also generate new refresh token to rotate;
     const newRefreshToken = generateRefreshToken({
       id: payload.id,
-      role: payload.role,
+      role: user.role,
     });
     attachCookie("accessToken", newAccessToken, res);
     attachCookie("refreshToken", newRefreshToken, res, {
-      path: "/api/auth/refresh-token",
+      path: "/api/auth",
       maxAgeMs: 7 * 24 * 60 * 60 * 1000,
     });
 
