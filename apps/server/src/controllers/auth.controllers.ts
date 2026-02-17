@@ -198,13 +198,12 @@ export async function renewAccessToken(
   req: Request,
   res: Response,
 ): Promise<Response | void> {
-  // check whether refresh token exists;
-  debugger;
-  const savedRefreshToken: string = req.cookies.refreshToken;
-  if (!savedRefreshToken) {
-    return res.status(401).json({ error: "Unauthorized!" });
-  }
-  try {
+	// check whether refresh token exists;
+	const savedRefreshToken: string = req.cookies.refreshToken;
+	if (!savedRefreshToken) {
+		return res.status(401).json({ error: "Unauthorized!" });
+	}
+	try {
 		// verify token if valid;
 		const decoded = jwt.verify(
 			savedRefreshToken,
