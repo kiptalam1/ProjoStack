@@ -43,13 +43,14 @@ export function attachCookie(
 
 export async function hashRefreshToken(token: string) {
   const saltRounds = 12;
-  await bcrypt.genSalt(saltRounds);
-  return await bcrypt.hash(token, saltRounds);
+  const tokenDigest = crypto.createHash("sha256").update(token).digest("hex");
+  return await bcrypt.hash(tokenDigest, saltRounds);
 }
 
 export async function compareRefreshTokens(
   generated: string,
   db_stored: string,
 ) {
-  return await bcrypt.compare(generated, db_stored);
+  const tokenDigest = crypto.createHash("sha256").update(generated).digest("hex");
+  return await bcrypt.compare(tokenDigest, db_stored);
 }

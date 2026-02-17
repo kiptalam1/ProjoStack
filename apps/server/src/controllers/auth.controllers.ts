@@ -199,69 +199,71 @@ export async function renewAccessToken(
   res: Response,
 ): Promise<Response | void> {
   // check whether refresh token exists;
+  debugger;
   const savedRefreshToken: string = req.cookies.refreshToken;
   if (!savedRefreshToken) {
     return res.status(401).json({ error: "Unauthorized!" });
   }
   try {
-    // verify token if valid;
-    const decoded = jwt.verify(
-      savedRefreshToken,
-      process.env.REFRESH_SECRET as string,
-    );
+		// verify token if valid;
+		const decoded = jwt.verify(
+			savedRefreshToken,
+			process.env.REFRESH_SECRET as string,
+		);
 
-    if (typeof decoded === "string") {
-      return res.status(401).json({ error: "Unauthorized!" });
-    }
+		if (typeof decoded === "string") {
+			return res.status(401).json({ error: "Unauthorized!" });
+		}
 
-    const payload = decoded as Payload;
+		const payload = decoded as Payload;
 
-    const user = await prisma.user.findUnique({
-      where: { id: payload.id },
-      select: { refreshToken: true, role: true },
-    });
+		const user = await prisma.user.findUnique({
+			where: { id: payload.id },
+			select: { refreshToken: true, role: true },
+		});
 
-    if (!user?.refreshToken) {
-      return res.status(401).json({ error: "Unauthorized!" });
-    }
-    //reject if token was rotated/logged out;
-    const isValidRefreshToken = await compareRefreshTokens(
-      savedRefreshToken,
-      user?.refreshToken as string,
-    );
-    if (!isValidRefreshToken) {
-      return res.status(401).json({ error: "Unauthorized!" });
-    }
+		if (!user?.refreshToken) {
+			return res.status(401).json({ error: "Unauthorized!" });
+		}
+		//reject if token was rotated/logged out;
+		const isValidRefreshToken = await compareRefreshTokens(
+			savedRefreshToken,
+			user?.refreshToken as string,
+		);
+		if (!isValidRefreshToken) {
+			return res.status(401).json({ error: "Unauthorized!" });
+		}
 
-    // generate new access token;
-    const newAccessToken = generateAccessToken({
-      id: payload.id,
-      role: user.role,
-    });
-    // also generate new refresh token to rotate;
-    const newRefreshToken = generateRefreshToken({
-      id: payload.id,
-      role: user.role,
-    });
-    attachCookie("accessToken", newAccessToken, res);
-    attachCookie("refreshToken", newRefreshToken, res, {
-      path: "/api/auth",
-      maxAgeMs: 7 * 24 * 60 * 60 * 1000,
-    });
+		// generate new access token;
+		const newAccessToken = generateAccessToken({
+			id: payload.id,
+			role: user.role,
+		});
+		// also generate new refresh token to rotate;
+		const newRefreshToken = generateRefreshToken({
+			id: payload.id,
+			role: user.role,
+		});
+		attachCookie("accessToken", newAccessToken, res);
+		attachCookie("refreshToken", newRefreshToken, res, {
+			path: "/api/auth",
+			maxAgeMs: 7 * 24 * 60 * 60 * 1000,
+		});
 
-    // update refresh token in db for rotation;
-    const hashedRefreshToken = await hashRefreshToken(newRefreshToken);
-    await prisma.user.update({
-      where: { id: payload.id },
-      data: {
-        refreshToken: hashedRefreshToken,
-      },
-    });
+		// update refresh token in db for rotation;
+		const hashedRefreshToken = await hashRefreshToken(newRefreshToken);
+		await prisma.user.update({
+			where: { id: payload.id },
+			data: {
+				refreshToken: hashedRefreshToken,
+			},
+		});
 
-    return res
-      .status(200)
-      .json({ message: "Token renewed and cookie attached" });
-  } catch {
-    return res.status(401).json({ error: "Unauthorized!" });
-  }
+		return res
+			.status(200)
+			.json({ message: "Token renewed and cookie attached" });
+	} catch (error) {
+		console.error(error);
+		return res.status(401).json({ error: "Unauthorized!" });
+	}
 }
