@@ -1,6 +1,6 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
-  "compilerOptions": {
+	// Visit https://aka.ms/tsconfig to read more about this file
+	"compilerOptions": {
 		// File Layout
 		"rootDir": "./src",
 		"outDir": "./dist",
@@ -19,6 +19,7 @@
 		"sourceMap": true,
 		"declaration": true,
 		"declarationMap": true,
+		"noEmitOnError": true,
 
 		// Stricter Typechecking Options
 		"noUncheckedIndexedAccess": true,
@@ -42,5 +43,7 @@
 		"skipLibCheck": true,
 		"moduleResolution": "nodenext",
 		"forceConsistentCasingInFileNames": true
-	}
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist", "tests", "prisma.config.ts"]
 }
