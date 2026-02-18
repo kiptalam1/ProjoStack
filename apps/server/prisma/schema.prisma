@@ -8,16 +8,26 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String      @id @default(uuid())
   username     String
-  email        String   @unique
+  email        String      @unique
   password     String
-  role         Role     @default(USER)
+  role         Role        @default(USER)
   refreshToken String?
-  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
+  workspaces   Workspace[]
+}
+
+model Workspace {
+  id        String   @id @default(uuid())
+  name      String
+  creator   User     @relation(fields: [creatorId], references: [id])
+  creatorId String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
 }
 
 enum Role {
   ADMIN
   USER
+  MEMBER
 }
