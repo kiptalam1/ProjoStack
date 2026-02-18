@@ -2,6 +2,29 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
+
+// get workspaces that user belongs in;
+export async function getUserWorkspaces(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const user = req.user?.id as string;
+    if (!user) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+    const workspaces = await prisma.workspace.findMany({
+      where: {
+        creatorId: user,
+      },
+    });
+    return res.status(200).json({ data: workspaces });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
+
 // any authenticated user can create a workspace;
 export async function createWorkspace(
   req: Request,

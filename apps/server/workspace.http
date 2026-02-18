@@ -19,3 +19,7 @@ Content-Type: application/json
 {
  "name": "workspace2"
 }
+
+### 
+# @attach-cookie-jar
+GET http://localhost:5000/api/workspaces

@@ -17,7 +17,7 @@ app.use(cookieParser());
 //
 // routes
 app.use("/api/auth", authRoutes);
-app.use("/api/workspace", workspaceRoutes);
+app.use("/api/workspaces", workspaceRoutes);
 //
 
 export default app;
