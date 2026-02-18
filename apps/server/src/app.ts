@@ -1,22 +1,23 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 //functions;
 import authRoutes from "./routes/auth.routes.js";
-dotenv.config();
+import workspaceRoutes from "./routes/workspace.routes.js";
 // create express app;
 const app = express();
 
 //middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(helmet({}));
-app.use(cors());
+app.use(cors({ credentials: true }));
 app.use(cookieParser());
 //
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/workspace", workspaceRoutes);
 //
 
 export default app;
