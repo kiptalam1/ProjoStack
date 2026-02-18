@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { Role } from "@prisma/client";
 
 export const RegisterUserSchema = z.object({
   username: z
@@ -31,5 +32,20 @@ export const LoginUserSchema = z.object({
     .regex(/[0-9]/, "Password must contain a number"),
 });
 
+export const PayloadSchema = z.object({
+  id: z.string(),
+  role: z.enum(Role),
+});
+
+export const WorkspaceSchema = z.object({
+  name: z
+    .string({ error: "Workspace name must be a string." })
+    .trim()
+    .min(3, { error: "Name must be at least 3 characters long." })
+    .max(40, { error: "Name is too long!" }),
+});
+
 export type RegisterUserData = z.infer<typeof RegisterUserSchema>;
 export type LoginUserData = z.infer<typeof LoginUserSchema>;
+export type PayloadData = z.infer<typeof PayloadSchema>;
+export type WorkspaceData = z.infer<typeof WorkspaceSchema>;
