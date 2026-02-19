@@ -71,7 +71,8 @@ export async function registerUser(
       data: newUser,
     });
   } catch (error: unknown) {
-    console.error(error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
     return res.status(500).json({ error: "Something went wrong." });
   }
 }
@@ -150,7 +151,8 @@ export async function loginUser(
       data: safeUser,
     });
   } catch (error: unknown) {
-    console.error(error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
     return res.status(500).json({
       error: "Something went wrong.",
     });
@@ -178,8 +180,9 @@ export async function logoutUser(
           },
         });
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(msg);
     }
   }
   res.clearCookie("accessToken", {
@@ -265,8 +268,9 @@ export async function renewAccessToken(
     return res
       .status(200)
       .json({ message: "Token renewed and cookie attached" });
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
     return res.status(401).json({ error: "Unauthorized!" });
   }
 }

@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
 
-// get all workspaces for that user belongs in;
+// get all workspaces that user belongs in;
 export async function getUserWorkspaces(
   req: Request,
   res: Response,
@@ -25,7 +25,8 @@ export async function getUserWorkspaces(
     }
     return res.status(200).json({ data: workspaces });
   } catch (error) {
-    console.error(error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
     return res.status(500).json({ error: "Something went wrong." });
   }
 }
@@ -68,7 +69,8 @@ export async function createWorkspace(
       .status(201)
       .json({ message: "Workspace created successfully.", data: newWorkspace });
   } catch (error) {
-    console.error(error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
     return res.status(500).json({ error: "Something went wrong." });
   }
 }
