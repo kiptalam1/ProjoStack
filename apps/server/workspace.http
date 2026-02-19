@@ -13,7 +13,7 @@ Content-Type: application/json
 ### 
 
 # @attach-cookie-jar
-POST http://localhost:5000/api/workspace/create
+POST http://localhost:5000/api/workspaces/create
 Content-Type: application/json
 
 {
@@ -23,3 +23,9 @@ Content-Type: application/json
 ### 
 # @attach-cookie-jar
 GET http://localhost:5000/api/workspaces
+
+###
+# @attach-cookie-jar
+DELETE http://localhost:5000/api/workspaces/delete/c5ff38ab-fe74-4273-a668-72cd0706d071
+
+

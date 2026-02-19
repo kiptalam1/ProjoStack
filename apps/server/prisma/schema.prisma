@@ -8,26 +8,61 @@ datasource db {
 }
 
 model User {
-  id           String      @id @default(uuid())
+  id           String   @id @default(uuid())
   username     String
-  email        String      @unique
+  email        String   @unique
   password     String
-  role         Role        @default(USER)
+  role         Role     @default(USER)
   refreshToken String?
-  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
-  workspaces   Workspace[]
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  createdWorkSpaces Workspace[]       @relation("WorkspaceCreator")
+  memberships       WorkspaceMember[]
+  invitationSent    WorkspaceMember[] @relation("WorkspaceInvitedBy")
 }
 
 model Workspace {
-  id        String   @id @default(uuid())
+  id        String            @id @default(uuid())
   name      String
-  creator   User     @relation(fields: [creatorId], references: [id])
+  creator   User              @relation("WorkspaceCreator", fields: [creatorId], references: [id])
   creatorId String
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  createdAt DateTime          @default(now()) @db.Timestamptz(6)
+  members   WorkspaceMember[]
+}
+
+model WorkspaceMember {
+  id          String           @id @default(uuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id])
+  workspaceId String
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id])
+  role        Role
+  createdAt   DateTime         @default(now()) @db.Timestamptz(6)
+  memberRole  WorkspaceRole    @default(MEMBER)
+  status      MembershipStatus @default(ACTIVE)
+  invitedById String?
+  invitedBy   User?            @relation("WorkspaceInvitedBy", fields: [invitedById], references: [id])
+  joinedAt    DateTime         @default(now()) @db.Timestamptz(6)
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+  @@index([userId])
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+enum WorkspaceRole {
+  ADMIN
   MEMBER
+  OWNER
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+  REMOVED
 }

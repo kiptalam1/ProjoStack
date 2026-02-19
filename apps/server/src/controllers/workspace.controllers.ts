@@ -3,6 +3,54 @@ import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
 
+/* DELETE a workspace;
+ * only admin and worksppace-creator can delete
+ * all members should be removed from workspace
+ * the deletion should be a hard delete;
+ */
+export async function deleteWorkspace(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const workspaceId = req.params.workspaceId as string;
+    const user = req.user;
+    const isAdmin = user?.role === "ADMIN";
+    if (!user?.id) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+
+    const workspace = await prisma.workspace.findUnique({
+      where: {
+        id: workspaceId,
+      },
+      select: {
+        creatorId: true,
+      },
+    });
+    if (!workspace) {
+      return res.status(404).json({ error: "Workspace not found." });
+    }
+    if (!isAdmin && workspace.creatorId !== user.id) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+
+    await prisma.workspace.delete({
+      where: {
+        id: workspaceId,
+        creatorId: user.id,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Workspace deleted successfully.",
+    });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong!" });
+  }
+}
 // get all workspaces that user belongs in;
 export async function getUserWorkspaces(
   req: Request,
