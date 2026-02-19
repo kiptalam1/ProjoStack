@@ -3,21 +3,26 @@ import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
 
-// get workspaces that user belongs in;
+// get all workspaces for that user belongs in;
 export async function getUserWorkspaces(
   req: Request,
   res: Response,
 ): Promise<Response> {
   try {
-    const user = req.user?.id as string;
-    if (!user) {
+    const user = req.user;
+    if (!user?.id) {
       return res.status(401).json({ error: "Unauthorized!" });
     }
-    const workspaces = await prisma.workspace.findMany({
-      where: {
-        creatorId: user,
-      },
-    });
+    let workspaces;
+    if (user.role !== "ADMIN") {
+      workspaces = await prisma.workspace.findMany({
+        where: {
+          creatorId: user.id,
+        },
+      });
+    } else {
+      workspaces = await prisma.workspace.findMany();
+    }
     return res.status(200).json({ data: workspaces });
   } catch (error) {
     console.error(error);
