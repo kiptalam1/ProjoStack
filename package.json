@@ -3,5 +3,11 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "prisma:generate": "prisma generate --schema=apps/server/prisma/schema.prisma",
+    "prisma:migrate:dev": "prisma migrate dev --schema=apps/server/prisma/schema.prisma",
+    "prisma:migrate:deploy": "prisma migrate deploy --schema=apps/server/prisma/schema.prisma",
+    "build:server": "npm run prisma:generate && npm --workspace apps/server run build"
+  }
 }

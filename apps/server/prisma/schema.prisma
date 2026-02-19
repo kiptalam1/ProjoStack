@@ -33,15 +33,13 @@ model Workspace {
 model WorkspaceMember {
   id          String           @id @default(uuid())
   userId      String
-  user        User             @relation(fields: [userId], references: [id])
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspaceId String
-  workspace   Workspace        @relation(fields: [workspaceId], references: [id])
-  role        Role
-  createdAt   DateTime         @default(now()) @db.Timestamptz(6)
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   memberRole  WorkspaceRole    @default(MEMBER)
   status      MembershipStatus @default(ACTIVE)
   invitedById String?
-  invitedBy   User?            @relation("WorkspaceInvitedBy", fields: [invitedById], references: [id])
+  invitedBy   User?            @relation("WorkspaceInvitedBy", fields: [invitedById], references: [id], onDelete: SetNull)
   joinedAt    DateTime         @default(now()) @db.Timestamptz(6)
 
   @@unique([userId, workspaceId])

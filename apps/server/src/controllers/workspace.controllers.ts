@@ -4,7 +4,7 @@ import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
 
 /* DELETE a workspace;
- * only admin and worksppace-creator can delete
+ * only admin and workspace-creator can delete
  * all members should be removed from workspace
  * the deletion should be a hard delete;
  */
@@ -64,12 +64,17 @@ export async function getUserWorkspaces(
     let workspaces;
     if (user.role !== "ADMIN") {
       workspaces = await prisma.workspace.findMany({
-        where: {
-          creatorId: user.id,
-        },
-      });
+				where: {
+					creatorId: user.id,
+				},
+				include: {
+					members: true,
+				},
+			});
     } else {
-      workspaces = await prisma.workspace.findMany();
+      workspaces = await prisma.workspace.findMany({
+				include: { members: true },
+			});
     }
     return res.status(200).json({ data: workspaces });
   } catch (error) {
@@ -100,19 +105,28 @@ export async function createWorkspace(
     }
     const { name } = parsed.data satisfies WorkspaceData;
     // check if user has a similar workspace;
-    const workspace = await prisma.workspace.findFirst({
-      where: { name },
-    });
-    if (workspace) {
-      return res.status(409).json({ error: "This name is in use." });
-    }
+    const exist = await prisma.workspace.findFirst({
+			where: { name, creatorId: req.user.id },
+			select: { id: true },
+		});
+    if (exist) {
+			return res.status(409).json({ error: "This name is in use." });
+		}
     // create the workspace;
-    const newWorkspace = await prisma.workspace.create({
-      data: {
-        name: name,
-        creatorId: req.user.id,
-      },
-    });
+    const newWorkspace = await prisma.$transaction(async (tx) => {
+			const ws = await tx.workspace.create({
+				data: { name: name, creatorId: req.user!.id },
+			});
+			await tx.workspaceMember.create({
+				data: {
+					userId: ws.creatorId,
+					workspaceId: ws.id,
+					memberRole: "OWNER",
+				},
+			});
+			return ws;
+		});
+
     return res
       .status(201)
       .json({ message: "Workspace created successfully.", data: newWorkspace });
