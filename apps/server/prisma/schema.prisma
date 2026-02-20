@@ -19,6 +19,7 @@ model User {
   createdWorkSpaces Workspace[]       @relation("WorkspaceCreator")
   memberships       WorkspaceMember[]
   invitationSent    WorkspaceMember[] @relation("WorkspaceInvitedBy")
+  projects          Project[]
 }
 
 model Workspace {
@@ -28,6 +29,7 @@ model Workspace {
   creatorId String
   createdAt DateTime          @default(now()) @db.Timestamptz(6)
   members   WorkspaceMember[]
+  projects  Project[]
 }
 
 model WorkspaceMember {
@@ -45,6 +47,20 @@ model WorkspaceMember {
   @@unique([userId, workspaceId])
   @@index([workspaceId])
   @@index([userId])
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  createdById String
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@unique([createdById, workspaceId])
+  @@index([createdById])
+  @@index([workspaceId])
 }
 
 enum Role {
