@@ -1,6 +1,9 @@
 import express from "express";
 import { isAuthenticated } from "../middlewares/auth.middlewares.js";
-import { createProjectInWorkspace } from "../controllers/project.controllers.js";
+import {
+  createProjectInWorkspace,
+  getWorkspaceProjects,
+} from "../controllers/project.controllers.js";
 
 const router = express.Router();
 
@@ -10,5 +13,5 @@ router.post(
   isAuthenticated,
   createProjectInWorkspace,
 );
-
+router.get("/workspace/:workspaceId", isAuthenticated, getWorkspaceProjects);
 export default router;
