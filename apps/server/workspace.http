@@ -17,7 +17,7 @@ POST http://localhost:5000/api/workspaces/create
 Content-Type: application/json
 
 {
- "name": "workspace2"
+ "name": "anotherone"
 }
 
 ### 
@@ -28,4 +28,9 @@ GET http://localhost:5000/api/workspaces
 # @attach-cookie-jar
 DELETE http://localhost:5000/api/workspaces/delete/c5ff38ab-fe74-4273-a668-72cd0706d071
 
+### 
+# @attach-cookie-jar
+PUT http://localhost:5000/api/workspaces/update/5444bdc1-b483-4039-bb4e-441295d7c25c
+Content-Type: application/json
 
+{ "name": "updated-workspace"}
