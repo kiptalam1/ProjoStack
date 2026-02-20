@@ -42,10 +42,19 @@ export const WorkspaceSchema = z.object({
     .string({ error: "Workspace name must be a string." })
     .trim()
     .min(3, { error: "Name must be at least 3 characters long." })
-    .max(40, { error: "Name is too long!" }),
+    .max(72, { error: "Name is too long!" }),
+});
+
+export const ProjectSchema = z.object({
+  name: z
+    .string({ error: "Workspace name must be a string." })
+    .trim()
+    .min(3, { error: "Name must be at least 3 characters long." })
+    .max(72, { error: "Name is too long!" }),
 });
 
 export type RegisterUserData = z.infer<typeof RegisterUserSchema>;
 export type LoginUserData = z.infer<typeof LoginUserSchema>;
 export type PayloadData = z.infer<typeof PayloadSchema>;
 export type WorkspaceData = z.infer<typeof WorkspaceSchema>;
+export type ProjectData = z.infer<typeof ProjectSchema>;

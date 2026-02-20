@@ -58,7 +58,6 @@ model Project {
   createdBy   User      @relation(fields: [createdById], references: [id])
   createdAt   DateTime  @default(now()) @db.Timestamptz(6)
 
-  @@unique([createdById, workspaceId])
   @@index([createdById])
   @@index([workspaceId])
 }

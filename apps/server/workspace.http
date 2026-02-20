@@ -34,3 +34,13 @@ PUT http://localhost:5000/api/workspaces/update/5444bdc1-b483-4039-bb4e-441295d7
 Content-Type: application/json
 
 { "name": "updated-workspace"}
+
+### 
+# @attach-cookie-jar
+POST http://localhost:5000/api/projects/workspace/480547b3-f25b-45a6-a9cf-1c1584c9f067/create
+Content-Type: application/json
+
+{ 
+  "name": "first-project"
+}
+

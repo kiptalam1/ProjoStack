@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 //functions;
 import authRoutes from "./routes/auth.routes.js";
 import workspaceRoutes from "./routes/workspace.routes.js";
+import projectRoutes from "./routes/project.routes.js";
 // create express app;
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/workspaces", workspaceRoutes);
+app.use("/api/projects", projectRoutes);
 //
 
 export default app;
