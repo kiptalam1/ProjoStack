@@ -3,6 +3,77 @@ import * as z from "zod";
 import { ProjectSchema } from "@projo/contracts";
 import { prisma } from "../lib/prisma.js";
 
+//DELETE a project in workspace;
+export async function deleteProjectInWorkspace(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const workspaceId = req.params.workspaceId as string;
+    const projectId = req.params.projectId as string;
+    const { user } = req;
+
+    // verify request params;
+    if (!projectId) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+    if (!workspaceId) {
+      return res.status(400).json({ error: "Invalid workspace ID" });
+    }
+
+    if (!user?.id) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+    // ensure workspace exists;
+    const existsWs = await prisma.workspace.findUnique({
+      where: {
+        id: workspaceId,
+      },
+      include: {
+        projects: true,
+      },
+    });
+    if (!existsWs) {
+      return res.status(404).json({ error: "Workspace not found." });
+    }
+
+    // ensure project exists;
+    const existsPrjct = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+        workspaceId: workspaceId,
+      },
+    });
+    if (!existsPrjct) {
+      return res.status(404).json({ error: "Project not found!" });
+    }
+
+    // ensure project belongs to user;
+    const belongs = existsPrjct.createdById === user.id;
+    if (!belongs) {
+      return res.status(403).json({ error: "Permission denied!" });
+    }
+
+    // delete and return project;
+    const projectDeleted = await prisma.project.delete({
+      where: {
+        id: projectId,
+        workspaceId: workspaceId,
+        createdById: user.id,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Project deleted successfully.",
+      data: projectDeleted,
+    });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
+
 // GET all projects in a workspace;
 export async function getWorkspaceProjects(
   req: Request,

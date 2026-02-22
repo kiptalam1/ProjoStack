@@ -10,6 +10,7 @@
 			"runtimeExecutable": "node",
 			"runtimeArgs": ["--import", "tsx"],
 			"envFile": "${workspaceFolder}/apps/server/.env",
+			"env": { "PORT": "5001" },
 			"console": "integratedTerminal",
 			"skipFiles": ["<node_internals>/**"],
 			"autoAttachChildProcesses": false,
