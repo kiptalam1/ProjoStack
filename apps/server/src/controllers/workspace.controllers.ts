@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
+import { error } from "console";
 
 // UPDATE workspace;
 export async function updateWorkspace(
@@ -31,11 +32,26 @@ export async function updateWorkspace(
     if (!workspaceId) {
       return res.status(400).json({ error: "Invalid workspace ID!" });
     }
+    // check if workspace exists;
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      select: {
+        id: true,
+        creatorId: true,
+      },
+    });
+    if (!workspace) {
+      return res.status(404).json({ error: "Workspace not found!" });
+    }
 
+    // ONLY creator can update the workspace;
+    const isCreatorWs = workspace.creatorId === user.id;
+    if (!isCreatorWs) {
+      return res.status(403).json({ error: "Permission denied!" });
+    }
     const updatedWorkspace = await prisma.workspace.update({
       where: {
-        id: workspaceId,
-        creatorId: String(user.id),
+        id: workspace.id,
       },
       data: {
         name: name,

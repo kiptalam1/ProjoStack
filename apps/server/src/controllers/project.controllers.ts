@@ -202,7 +202,7 @@ export async function getWorkspaceProjects(
     // ensure user is a member of the workspace;
     const isMember = existsWs.members.find((m) => m.userId === String(user.id));
     if (!isMember) {
-      res.status(403).json({ error: "You are not a member!" });
+      return res.status(403).json({ error: "You are not a member!" });
     }
 
     // fetch projects;
