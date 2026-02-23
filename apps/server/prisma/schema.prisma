@@ -20,6 +20,7 @@ model User {
   memberships       WorkspaceMember[]
   invitationSent    WorkspaceMember[] @relation("WorkspaceInvitedBy")
   projects          Project[]
+  tasks             Task[]            @relation("TaskCreator")
 }
 
 model Workspace {
@@ -30,6 +31,7 @@ model Workspace {
   createdAt DateTime          @default(now()) @db.Timestamptz(6)
   members   WorkspaceMember[]
   projects  Project[]
+  tasks     Task[]
 }
 
 model WorkspaceMember {
@@ -57,9 +59,23 @@ model Project {
   createdById String
   createdBy   User      @relation(fields: [createdById], references: [id])
   createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  tasks       Task[]
 
   @@index([createdById])
   @@index([workspaceId])
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  status      TaskStatus
+  projectId   String
+  project     Project    @relation(fields: [projectId], references: [id])
+  workspaceId String
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id])
+  createdById String
+  createdBy   User       @relation("TaskCreator", fields: [createdById], references: [id])
+  createdAt   DateTime   @default(now())
 }
 
 enum Role {
@@ -78,4 +94,10 @@ enum MembershipStatus {
   INVITED
   SUSPENDED
   REMOVED
+}
+
+enum TaskStatus {
+  COMPLETE
+  STARTED
+  PENDING
 }
