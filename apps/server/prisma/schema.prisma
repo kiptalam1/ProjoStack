@@ -68,7 +68,7 @@ model Project {
 model Task {
   id          String     @id @default(uuid())
   title       String
-  status      TaskStatus
+  status      TaskStatus @default(PENDING)
   projectId   String
   project     Project    @relation(fields: [projectId], references: [id])
   workspaceId String

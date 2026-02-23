@@ -5,8 +5,8 @@ POST http://localhost:5000/api/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "lilian@gmail.com",
-  "password": "Lilian1234"
+  "email": "adams@gmail.com",
+  "password": "Adams1234"
 }
 
 
@@ -63,3 +63,15 @@ Content-Type: application/json
 {
   "name": "only-project"
 }
+
+### 
+# @attach-cookie-jar
+# @jq .
+
+POST http://localhost:5000/api/tasks/project/a57e3b81-a212-4691-8b4d-f983a07cb31f
+Content-Type: application/json
+
+{ 
+  "title": "..."
+}
+
