@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
-import { error } from "console";
 
 // UPDATE workspace;
 export async function updateWorkspace(
@@ -44,9 +43,10 @@ export async function updateWorkspace(
       return res.status(404).json({ error: "Workspace not found!" });
     }
 
-    // ONLY creator can update the workspace;
+    // ONLY creator and ADMIN can update the workspace;
     const isCreatorWs = workspace.creatorId === user.id;
-    if (!isCreatorWs) {
+    const isAdmin = user.role === "ADMIN";
+    if (!isCreatorWs && !isAdmin) {
       return res.status(403).json({ error: "Permission denied!" });
     }
     const updatedWorkspace = await prisma.workspace.update({
