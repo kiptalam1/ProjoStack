@@ -4,6 +4,7 @@ import {
   createProjectInWorkspace,
   getWorkspaceProjects,
   deleteProjectInWorkspace,
+  updateProjectInWorkspace,
 } from "../controllers/project.controllers.js";
 
 const router = express.Router();
@@ -19,5 +20,10 @@ router.delete(
   "/workspace/:workspaceId/project/:projectId",
   isAuthenticated,
   deleteProjectInWorkspace,
+);
+router.put(
+  "/workspace/:workspaceId/project/:projectId",
+  isAuthenticated,
+  updateProjectInWorkspace,
 );
 export default router;

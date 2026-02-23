@@ -3,6 +3,94 @@ import * as z from "zod";
 import { ProjectSchema } from "@projo/contracts";
 import { prisma } from "../lib/prisma.js";
 
+// UPDATE project in workspace;
+const UpdateProjectSchema = ProjectSchema.pick({ name: true });
+export async function updateProjectInWorkspace(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const user = req.user;
+    const workspaceId = req.params.workspaceId as string;
+    const projectId = req.params.projectId as string;
+
+    // ensure project id is valid;
+    if (!projectId) {
+      return res.status(400).json({ error: "Invalid project ID!" });
+    }
+
+    // ensure id is valid;
+    if (!workspaceId) {
+      return res.status(400).json({ error: "Invalid workspace ID!" });
+    }
+
+    // ensure user is present;
+    if (!user?.id) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+    // validate user input;
+    const parsed = UpdateProjectSchema.safeParse(req.body);
+    if (!parsed.success) {
+      const { formErrors, fieldErrors } = z.flattenError(parsed.error);
+      const messages = [
+        ...Object.values(fieldErrors).flat(),
+        ...Object.values(formErrors).flat(),
+      ];
+      return res.status(400).json({ error: messages });
+    }
+    // check if workspace exists;
+    const workspace = await prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      select: {
+        id: true,
+        creatorId: true,
+        members: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+    });
+    if (!workspace) {
+      return res.status(404).json({ error: "Workspace not found." });
+    }
+
+    // check if project with this id exists in ws;
+    const projectExists = await prisma.project.findUnique({
+      where: { id: projectId, workspaceId, createdById: user.id },
+      select: { id: true, createdById: true },
+    });
+    if (!projectExists) {
+      return res.status(404).json({ error: "Project not found!" });
+    }
+    // only project creator can update project;
+    const isOwner = projectExists.createdById === user.id;
+    if (!isOwner) {
+      return res.status(403).json({ error: "Permission denied!" });
+    }
+    // update project;
+    const name = parsed.data.name.trim();
+    const projectUpdated = await prisma.project.update({
+      where: {
+        id: projectExists.id,
+      },
+      data: {
+        name: name,
+      },
+    });
+
+    // return updated project in response;
+    return res.status(200).json({
+      message: "Project updated successfully.",
+      data: projectUpdated,
+    });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
+
 //DELETE a project in workspace;
 export async function deleteProjectInWorkspace(
   req: Request,

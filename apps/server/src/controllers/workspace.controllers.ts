@@ -31,6 +31,7 @@ export async function updateWorkspace(
     if (!workspaceId) {
       return res.status(400).json({ error: "Invalid workspace ID!" });
     }
+
     const updatedWorkspace = await prisma.workspace.update({
       where: {
         id: workspaceId,
