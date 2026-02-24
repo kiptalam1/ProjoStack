@@ -79,3 +79,7 @@ Content-Type: application/json
 # @attach-cookie-jar
 # @jq . 
 GET http://localhost:5000/api/tasks/project/a57e3b81-a212-4691-8b4d-f983a07cb31f
+### 
+# @jq .
+# @attach-cookie-jar
+DELETE http://localhost:5000/api/tasks/project/a57e3b81-a212-4691-8b4d-f983a07cb31f/task/10dce6ff-34f5-46b8-8d36-aede48d4a36c
