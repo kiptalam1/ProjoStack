@@ -75,3 +75,7 @@ Content-Type: application/json
   "title": "..."
 }
 
+### 
+# @attach-cookie-jar
+# @jq . 
+GET http://localhost:5000/api/tasks/project/a57e3b81-a212-4691-8b4d-f983a07cb31f
