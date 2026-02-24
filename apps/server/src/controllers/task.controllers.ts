@@ -4,96 +4,103 @@ import { TaskSchema } from "@projo/contracts";
 import * as z from "zod";
 
 // DELETE a task;
-export async function deleteATask(req:Request, res:Response):Promise<Response>{
+export async function deleteATask(
+  req: Request,
+  res: Response,
+): Promise<Response> {
   try {
     const taskId = req.params.taskId as string;
     const projectId = req.params.projectId as string;
     const user = req.user;
 
     if (!user?.id) {
-      return res.status(401).json({error: "Unauthorized!"})
+      return res.status(401).json({ error: "Unauthorized!" });
     }
     if (!projectId || !taskId) {
-      return res.status(400).json({error: "Invalid project or task ID!"})
+      return res.status(400).json({ error: "Invalid project or task ID!" });
     }
 
     // check if project exists + workspaceId;
-    const project = await prisma.project.findUnique({where: {id: projectId},
-      select : {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: {
         workspaceId: true,
-        id: true
-      }
-    })
+        id: true,
+      },
+    });
     if (!project) {
-      return res.status(404).json({error: "Project not found."});
+      return res.status(404).json({ error: "Project not found." });
     }
     // check if task exists;
     const task = await prisma.task.findUnique({
       where: {
-        id: taskId
-      }, select: {
+        id: taskId,
+      },
+      select: {
         createdById: true,
-        id: true
-      }
-    })
+        id: true,
+      },
+    });
     if (!task) {
-      return res.status(404).json({error: "Task not found."})
+      return res.status(404).json({ error: "Task not found." });
     }
-    // check if user is creator of this task;
-    const isOwner = task?.createdById === user?.id 
-    if (!isOwner) {
-      return res.status(403).json({error: "Permission denied!"})
+    // check if user is creator of this task or ADMIN;
+    const isOwner = task?.createdById === user?.id;
+    if (!isOwner && !(user.role === "ADMIN")) {
+      return res.status(403).json({ error: "Permission denied!" });
     }
 
     // delete task;
     const taskDeleted = await prisma.task.delete({
-      where : {
+      where: {
         id: task?.id,
         projectId,
-        workspaceId: project.workspaceId
-      }
-    })
+        workspaceId: project.workspaceId,
+      },
+    });
     return res.status(200).json({
       message: "Task deleted successfully.",
-      data: taskDeleted
-    })
+      data: taskDeleted,
+    });
   } catch (error: unknown) {
-     const msg = error instanceof Error ? error.message : String(error);
+    const msg = error instanceof Error ? error.message : String(error);
     console.error(msg);
-    return res.status(500).json({error: "Something went wrong."})
-  } 
-  
+    return res.status(500).json({ error: "Something went wrong." });
+  }
 }
 
 // FETCH all tasks in a project;
-export async function getAllTasks(req:Request, res:Response):Promise<Response> {
+export async function getAllTasks(
+  req: Request,
+  res: Response,
+): Promise<Response> {
   try {
     const user = req.user;
     const projectId = req.params.projectId as string;
 
-    if(!projectId) {
-      return res.status(400).json({error: "Invalid project ID!"});
+    if (!projectId) {
+      return res.status(400).json({ error: "Invalid project ID!" });
     }
 
-    if (!user?.id){
+    if (!user?.id) {
       return res.status(401).json({
-        error: "Unauthorized!"
-      })
+        error: "Unauthorized!",
+      });
     }
-    
+
     // ensure project exists;
     const project = await prisma.project.findUnique({
-      where: { id: projectId},
+      where: { id: projectId },
       select: {
         workspaceId: true,
         id: true,
-      }
+      },
     });
 
-    if (!project){
+    if (!project) {
       return res.status(404).json({
-        error: "Project not found."
-      })
+        error: "Project not found.",
+      });
     }
 
     // check if workspace exists and user is member;
@@ -123,18 +130,17 @@ export async function getAllTasks(req:Request, res:Response):Promise<Response> {
     const tasks = await prisma.task.findMany({
       where: {
         projectId: project.id,
-
-      }
-    })
+      },
+    });
 
     return res.status(200).json({
-      data: tasks
-    })
-  } catch (error:unknown) {
+      data: tasks,
+    });
+  } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error(msg);
-    return res.status(500).json({error: "Something went wrong."})
-  }  
+    return res.status(500).json({ error: "Something went wrong." });
+  }
 }
 
 // CREATE a task
@@ -163,7 +169,7 @@ export async function createTask(
       ];
       return res.status(400).json({ error: messages });
     }
-    const title = parsed.data.title.trim()
+    const title = parsed.data.title.trim();
     if (!title) return res.status(400).json({ error: "Title is required." });
     // get project + its wsID;
     const project = await prisma.project.findUnique({
