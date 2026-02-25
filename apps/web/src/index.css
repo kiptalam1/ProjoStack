@@ -24,6 +24,9 @@
   --color-sidebar-text: oklch(0.929 0.013 255.508);
   --color-sidebar-active: oklch(0.279 0.041 260.031);
   --color-sidebar-active-border: oklch(54.6% 0.245 262.881);
+
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
+  --font-jetbrains: "JetBrains Mono", system-ui, -apple-system, sans-serif;
 }
 
 :root {
@@ -31,7 +34,7 @@
   --color-card: oklch(1 0 0);
   --color-border: oklch(0.929 0.013 255.508);
 
-  --color-text: oklch(0.208 0.042 265.755);
+  --color-text: oklch(0.38 0.03 260);
   --color-muted: oklch(0.554 0.046 257.417);
 
   --color-primary: oklch(54.6% 0.245 262.881);
@@ -47,6 +50,7 @@
 
   color: var(--color-text);
   background: var(--color-bg);
+  font-family: var(--font-inter);
 }
 
 .dark {
