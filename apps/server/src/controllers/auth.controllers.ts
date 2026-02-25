@@ -20,6 +20,8 @@ import {
   type Payload,
 } from "../utils/token.utils.js";
 
+const isProd = process.env.NODE_ENV === "production";
+
 // register user logic;
 export async function registerUser(
   req: Request,
@@ -145,7 +147,7 @@ export async function loginUser(
       },
     });
     // return logged in user if success
-    const { password: _, ...safeUser } = userFound;
+    const { password: _pw, refreshToken: _rt, ...safeUser } = userFound;
     return res.status(200).json({
       message: "Logged in successfully.",
       data: safeUser,
@@ -186,17 +188,17 @@ export async function logoutUser(
     }
   }
   res.clearCookie("accessToken", {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    httpOnly: true,
-    path: "/",
-  });
+		secure: isProd,
+		sameSite: "strict",
+		httpOnly: true,
+		path: "/",
+	});
   res.clearCookie("refreshToken", {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    httpOnly: true,
-    path: "/api/auth",
-  });
+		secure: isProd,
+		sameSite: "strict",
+		httpOnly: true,
+		path: "/api/auth",
+	});
   return res.status(200).json({ message: "Logged out successfully." });
 }
 

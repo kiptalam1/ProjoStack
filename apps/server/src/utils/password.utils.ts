@@ -6,9 +6,6 @@ export async function hashPassword(inputPassword: string) {
   return await bcrypt.hash(inputPassword, 12);
 }
 
-export async function comparePassword(
-  inputPassword: string,
-  hashedpassword: string,
-) {
-  return await bcrypt.compare(inputPassword, hashedpassword);
+export async function comparePassword(inputPassword: string, hashedPassword: string) {
+	return await bcrypt.compare(inputPassword, hashedPassword);
 }

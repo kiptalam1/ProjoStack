@@ -13,6 +13,9 @@ export type Payload = {
 const accessSecret: string = process.env.ACCESS_SECRET!;
 const refreshSecret: string = process.env.REFRESH_SECRET!;
 
+const isProd = process.env.NODE_ENV === "production";
+
+
 export function generateAccessToken({ id, role }: Payload): string {
   return jwt.sign({ id, role }, accessSecret, {
     expiresIn: "15m",
@@ -33,12 +36,12 @@ export function attachCookie(
   options?: { path?: string; maxAgeMs?: number },
 ) {
   res.cookie(key, value, {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    httpOnly: true,
-    path: options?.path ?? "/",
-    maxAge: options?.maxAgeMs ?? 15 * 60 * 1000,
-  });
+		secure: isProd,
+		sameSite: "strict",
+		httpOnly: true,
+		path: options?.path ?? "/",
+		maxAge: options?.maxAgeMs ?? 15 * 60 * 1000,
+	});
 }
 
 export async function hashRefreshToken(token: string) {

@@ -17,13 +17,23 @@ import {
 // create express app;
 const app = express();
 
+// const allowedOrigins = ["http://localhost:3000/"];
 //middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet({}));
-app.use(cors({ credentials: true }));
+app.use(
+	cors({
+		origin: "http://localhost:3000", // or 5173 if Vite default
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization"],
+	}),
+);
 app.use(cookieParser());
-//
+
+// explicitly handle preflight 
+// app.options("/.*/", cors());
 // routes
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/workspaces", apiLimiter, workspaceRoutes);
