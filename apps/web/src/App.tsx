@@ -1,15 +1,16 @@
 import { Routes, Route } from "react-router";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
     <>
-      <div className="bg-bg p-4 sm:p-6 max-w-7xl mx-auto">
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto">
         <h1>hello</h1>
         <Routes>
 
           <Route path="auth/login" element={<LoginPage />} />
-          {/*<Route path="auth/register" element={<Register />} />*/}
+          <Route path="auth/register" element={<RegisterPage />} />
         </Routes>
       </div>
     </>

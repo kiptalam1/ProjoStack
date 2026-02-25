@@ -19,18 +19,18 @@ export default function LoginPage() {
             <input className="border border-border rounded-lg transition-all ease-in duration-100 outline-none focus:ring ring-primary p-2 w-full mt-1"
               id="email" name="email" type="email" />
           </div>
-        </div>
 
-        <div>
-          <label className="text-sm" htmlFor="password">Password</label>
-          <div className="relative mt-1">
-            <input className=" border border-border rounded-lg transition-all ease-in duration-100 outline-none focus:ring ring-primary p-2 w-full"
-              id="password" name="password" type={showPassword ? "text" : "password"} />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted focus:outline-none hover:text-primary">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+          <div>
+            <label className="text-sm" htmlFor="password">Password</label>
+            <div className="relative mt-1">
+              <input className=" border border-border rounded-lg transition-all ease-in duration-100 outline-none focus:ring ring-primary p-2 w-full"
+                id="password" name="password" type={showPassword ? "text" : "password"} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted focus:outline-none hover:text-primary">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+            </div>
           </div>
-        </div>
 
-        <button type="submit" className="bg-primary hover:bg-primary-hover text-white rounded-lg p-2 transition-all duration-100 cursor-pointer mb-5">Sign in</button>
+          <button type="submit" className="bg-primary hover:bg-primary-hover text-white rounded-lg p-2 transition-all duration-100 cursor-pointer my-5">Sign in</button>
+        </div>
       </form>
 
     </section>
