@@ -6,7 +6,6 @@ function App() {
   return (
     <>
       <div className="p-4 sm:p-6 max-w-7xl mx-auto">
-        <h1>hello</h1>
         <Routes>
 
           <Route path="auth/login" element={<LoginPage />} />
