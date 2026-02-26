@@ -13,9 +13,16 @@ export type User = {
 	createdAt: string;
 };
 
+export type RegisterDataType = {
+  username: string;
+  email: string;
+  password: string;
+}
+
 type AuthContextType = {
 	user: User | null;
 	login: (data: LoginDataType) => Promise<Response | void>;
+  register: (data: RegisterDataType) => Promise<Response | void>
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
