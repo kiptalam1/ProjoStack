@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import api from "../api/api";
 import { type User, type LoginDataType, AuthContext, type RegisterDataType } from "./AuthContext";
@@ -61,8 +61,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  const refreshToken = async () => {
+    try {
+      await api.post("/auth/refresh-token")
+    } catch (error: unknown) {
+      const msg = error instanceof AxiosError ? getErrorMessage(error) : error instanceof Error ? error.message : String(error);
+      console.error(msg);
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, register }}>
+    <AuthContext.Provider value={{ user, login, register, refreshToken }}>
       {children}
     </AuthContext.Provider>
   );

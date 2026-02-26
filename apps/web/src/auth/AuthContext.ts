@@ -23,6 +23,7 @@ type AuthContextType = {
 	user: User | null;
 	login: (data: LoginDataType) => Promise<Response | void>;
   register: (data: RegisterDataType) => Promise<Response | boolean | void>
+  refreshToken: () => Promise<void>
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
