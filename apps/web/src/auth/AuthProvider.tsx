@@ -45,18 +45,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const register = async (data: RegisterDataType) => {
+  const register = async (data: RegisterDataType): Promise<boolean> => {
     try {
-      const toastResult = toast.promise(api.post("/auth/register", data), {
+      await toast.promise(api.post("/auth/register", data), {
         loading: "Loading...",
         success: (response) => response.data.message ?? "Account created successfully",
         error: (err: AxiosError<AuthError>) => getErrorMessage(err)
       });
-      const res = await toastResult.unwrap();
-      if (!res.data) return;
+      //const res = await toastResult.unwrap();
+      return true;
     } catch (error: unknown) {
       const msg = error instanceof AxiosError ? getErrorMessage(error as AxiosError<AuthError>) : error instanceof Error ? error.message : String(error);
       console.error(msg);
+      return false;
     }
   }
 
