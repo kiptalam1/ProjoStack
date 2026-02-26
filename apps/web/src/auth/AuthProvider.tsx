@@ -1,8 +1,9 @@
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
+import { AxiosError, type AxiosResponse } from "axios";
 import { toast } from "sonner";
 import api from "../api/api";
 import { type User, type LoginDataType, AuthContext, type RegisterDataType } from "./AuthContext";
+import { useNavigate } from "react-router";
 
 type AuthSuccess = { message?: string; user: User };
 type AuthError = { error?: string[] | string };
@@ -20,6 +21,10 @@ const getErrorMessage = (err: AxiosError<AuthError>): string => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate()
+
+
+
   const login = async (data: LoginDataType): Promise<void> => {
     try {
       const toastResult = toast.promise(
@@ -61,17 +66,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  const refreshToken = async () => {
+  const logoutUser = async () => {
     try {
-      await api.post("/auth/refresh-token")
+      await toast.promise(api.post("/auth/logout"), {
+        loading: "Logging out...",
+        success: (response: AxiosResponse<AuthSuccess>) => response.data.message ?? "Logged out successfully",
+        error: (err: AxiosError<AuthError>) => getErrorMessage(err)
+      })
+      setUser(null);
+      navigate("/auth/login");
     } catch (error: unknown) {
-      const msg = error instanceof AxiosError ? getErrorMessage(error) : error instanceof Error ? error.message : String(error);
+      const msg = error instanceof AxiosError ? getErrorMessage(error as AxiosError<AuthError>) : error instanceof Error ? error.message : String(error);
       console.error(msg);
     }
   }
 
+
   return (
-    <AuthContext.Provider value={{ user, login, register, refreshToken }}>
+    <AuthContext.Provider value={{ user, login, register, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );
