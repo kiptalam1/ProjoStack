@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, type SyntheticEvent } from "react";
 import { useAuth } from "../auth/useAuth";
@@ -11,12 +11,14 @@ export default function LoginPage() {
     password: "",
   });
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
     e.preventDefault();
     try {
       await login(formData);
+      navigate("/dashboard");
     } finally {
       setIsSubmitting(false);
     }
