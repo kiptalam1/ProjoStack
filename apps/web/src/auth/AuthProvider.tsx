@@ -5,7 +5,7 @@ import api from "../api/api";
 import { type User, type LoginDataType, AuthContext, type RegisterDataType } from "./AuthContext";
 import { useNavigate } from "react-router";
 
-type AuthSuccess = { message?: string; user: User };
+type AuthSuccess = { message?: string; data: User };
 type AuthError = { error?: string[] | string };
 
 const getErrorMessage = (err: AxiosError<AuthError>): string => {
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
       const res = await toastResult.unwrap();
       if (!res.data) return;
-      setUser(res.data.user);
+      setUser(res.data.data);
     } catch (error: unknown) {
       const msg =
         error instanceof AxiosError ?

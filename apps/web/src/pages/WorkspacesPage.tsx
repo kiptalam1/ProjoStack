@@ -1,12 +1,18 @@
-import Sidebar from "../components/navigation/sidebar"
+import useWorkspaces from "../features/workspaces/hooks/useWorkspaces"
 
 export default function WorkspacesPage() {
 
-
+  const { isPending, data, isError, error } = useWorkspaces()
+  //  console.log(data)
   return (
-    <>
-      <h1>workspace</h1>
-      <Sidebar />
-    </>
+    <div className="w-full">
+      {
+        data && (
+          data.map((w) => (
+            <li key={w.id}>{w.name}</li>
+          ))
+        )
+      }
+    </div>
   )
 }
