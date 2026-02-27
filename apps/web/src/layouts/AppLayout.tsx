@@ -1,20 +1,15 @@
+import { useState } from "react";
 import Sidebar from "../components/navigation/sidebar"
-import { SidebarOpen, SidebarClose } from "lucide-react";
 
 export default function AppLayout() {
-
+  const [showSidebar, setShowSidebar] = useState(false);
 
   return (
     <>
-      <div className="relative w-full min-h-screen mx-auto grid grid-cols-[240px_1fr]">
+      <div className={`relative w-full min-h-screen mx-auto grid transition-[grid-template-columns] ease-in-out duration-300 ${showSidebar ? "grid-cols-[240px_1fr]" : "grid-cols-[72px_1fr]"}`}>
 
-        <div className="absolute p-2 left-45">
-          <button className="p-2 text-sidebar-text hover:text-muted hover:bg-sidebar-active transition-all duration-100 cursor-pointer rounded-sm">
-            <SidebarClose size={22} />
-          </button>
-        </div>
 
-        <Sidebar />
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       </div>
     </>
   )
