@@ -24,16 +24,16 @@ export default function Sidebar({ showSidebar, setShowSidebar }: SidebarPropType
         <button
           onClick={toggleSidebar}
           aria-label={showSidebar ? "Collapse sidebar" : "Expand sidebar"}
-          className={`absolute right-1 top-2 px-3 py-2 text-sidebar-text hover:text-muted hover:bg-sidebar-active transition-all duration-100 cursor-pointer rounded-sm ${showSidebar ? "hover:cursor-w-resize" : "hover:cursor-e-resize"}`}>
+          className={`absolute right-2 top-2 px-3 py-2 text-sidebar-text hover:text-muted hover:bg-sidebar-active transition-all duration-100 cursor-pointer rounded-sm ${showSidebar ? "hover:cursor-w-resize" : "hover:cursor-e-resize"}`}>
           {showSidebar ? <SidebarClose size={22} /> : <SidebarOpen size={22} />}
 
         </button>
 
 
         {/* Brand / spacer */}
-        <div className="flex items-center gap-3 mt-12 px-2 pb-2 text-muted">
-          < Handshake size={24} className="shrink-0" />
-          <span className={showSidebar ? "text-sm font-semibold text-muted" : "hidden"}>Dashboard</span>
+        <div className={`flex items-center gap-2 mt-12  pl-2 py-2 text-muted ${showSidebar ? "justify-start" : "justify-center"}`}>
+          < Handshake size={30} className="shrink-0" />
+          <span className={showSidebar ? "text-2xl font-bold text-muted" : "hidden"}>Dashboard</span>
         </div>
 
         <nav className="mt-4 flex flex-col gap-3">
