@@ -21,11 +21,13 @@ const getErrorMessage = (err: AxiosError<AuthError>): string => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
 
 
 
   const login = async (data: LoginDataType): Promise<void> => {
+    setLoading(true);
     try {
       const toastResult = toast.promise(
         api.post<AuthSuccess>("/auth/login", data),
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await toastResult.unwrap();
       if (!res.data) return;
       setUser(res.data.data);
+      setLoading(false)
     } catch (error: unknown) {
       const msg =
         error instanceof AxiosError ?
@@ -47,6 +50,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             : String(error);
       console.error(msg);
       setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logoutUser }}>
+    <AuthContext.Provider value={{ loading, user, login, register, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );

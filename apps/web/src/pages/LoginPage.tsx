@@ -18,7 +18,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(formData);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } finally {
       setIsSubmitting(false);
     }

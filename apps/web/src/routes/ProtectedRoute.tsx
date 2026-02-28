@@ -1,10 +1,15 @@
 import { Navigate, Outlet, } from "react-router";
 import { useAuth } from "../auth/useAuth"
+import { Loader } from "lucide-react";
 
 export default function ProtectedRoutes() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) {
+  if (loading) {
+    return <div className="mx-auto text-center">{<Loader size={12} />}</div>
+  }
+
+  if (!loading && !user) {
     return <Navigate to="/auth/login" replace />
   }
   return <Outlet />

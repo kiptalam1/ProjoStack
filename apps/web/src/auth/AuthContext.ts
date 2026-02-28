@@ -20,10 +20,11 @@ export type RegisterDataType = {
 };
 
 type AuthContextType = {
+  loading: boolean;
   user: User | null;
-  login: (data: LoginDataType) => Promise<Response | void>;
-  register: (data: RegisterDataType) => Promise<Response | boolean | void>;
-  logoutUser: () => Promise<Response | void>;
+  login: (data: LoginDataType) => Promise<void>;
+  register: (data: RegisterDataType) => Promise<boolean | void>;
+  logoutUser: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);

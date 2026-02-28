@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router";
+import { Routes, Route, Outlet, Navigate } from "react-router";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import WorkspacesPage from "./pages/WorkspacesPage"
@@ -29,6 +29,7 @@ function App() {
         {/* protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<AppLayout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="workspaces" element={<WorkspacesPage />} />
           </Route>

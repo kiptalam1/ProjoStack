@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Sidebar from "../components/navigation/sidebar"
-import WorkspacesPage from "../pages/WorkspacesPage";
 import { Menu, } from "lucide-react";
 import { Outlet } from "react-router";
 
@@ -50,7 +49,6 @@ export default function AppLayout() {
           >
             <Menu size={22} />
           </button>
-          <WorkspacesPage />
           <Outlet />
         </main>
       </div>

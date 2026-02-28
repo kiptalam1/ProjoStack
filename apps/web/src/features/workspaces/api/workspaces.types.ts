@@ -3,7 +3,7 @@ export type MemberTypes = {
   userId: string;
   workspaceId: string;
   memberRole: "ADMIN" | "OWNER" | "MEMBER";
-  status: "COMPLETE" | "STARTED" | "PENDING";
+  status: "ACTIVE" | "INVITED" | "SUSPENDED" | "REMOVED";
   invitedById: string;
   joinedAt: string;
 };
