@@ -6,7 +6,7 @@ export default function ProtectedRoutes() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="mx-auto text-center">{<Loader size={12} />}</div>
+    return <div className="mx-auto text-center">{<Loader size={12} className="animate-spin mx-auto" />}</div>
   }
 
   if (!loading && !user) {
