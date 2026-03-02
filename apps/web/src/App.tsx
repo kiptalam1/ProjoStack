@@ -2,7 +2,7 @@ import { Routes, Route, Outlet, Navigate } from "react-router";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import WorkspacesPage from "./pages/WorkspacesPage";
-import ProjectsPage from "./pages/ProjectsPage";
+import WorkspaceProjectsPage from "./pages/WorkspaceProjectsPage";
 import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "sonner";
 import AppLayout from "./layouts/AppLayout";
@@ -30,10 +30,14 @@ function App() {
         {/* protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<AppLayout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="workspaces" element={<WorkspacesPage />} />
-            <Route path="projects" element={<ProjectsPage />} />
+            <Route path="workspaces">
+              <Route index element={<WorkspacesPage />} />
+              <Route path=":workspaceId/projects" element={<WorkspaceProjectsPage />} />
+            </Route>
+            {/*<Route path="projects" element={<ProjectsPage />} />*/}
+            {/*<Route path="*" element={<NotFoundPage />} />*/}
           </Route>
         </Route>
       </Routes>

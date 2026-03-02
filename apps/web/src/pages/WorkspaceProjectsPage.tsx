@@ -1,11 +1,12 @@
-import { Link } from "react-router"
-import useWorkspaces from "../features/workspaces/hooks/useWorkspaces"
+import { Link, useParams } from "react-router"
 import { useAuth } from "../auth/useAuth"
 import { Loader2 } from "lucide-react";
+import { useGetProjects } from "../features/projects/hooks/useProjects";
 
-export default function ProjectsPage() {
-  const { user, loading } = useAuth();
-  const { isPending, data, isError, error } = useWorkspaces()
+export default function WorkspaceProjectsPage() {
+  const { loading } = useAuth();
+  const { workspaceId } = useParams();
+  const { isPending, data, isError, error } = useGetProjects(workspaceId as string)
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -38,31 +39,30 @@ export default function ProjectsPage() {
         <h1 className="text-2xl font-bold">Projects</h1>
         <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create Project
         </button>
-        <p className="text-xs">Select a project to continue</p>
+        {
+          data.length > 0 &&
+          <p className="text-xs">Select a project to continue</p>
+        }
       </div>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
         {
-          data?.map((w) => {
-            const wsUser = w.members.find(m => m.userId === user?.id);
-            const joinedDate = wsUser?.joinedAt
-              ? formatter.format(new Date(wsUser.joinedAt)) : null;
+          data?.map((p) => {
+            const joinedDate = p.createdAt
+              ? formatter.format(new Date(p.createdAt)) : null;
             return (
               <Link
-                to={`/workspace/${w.id}`}
-                key={w.id}
+                to={`/${p.id}/tasks`}
+                key={p.id}
                 className="p-4 bg-card shadow-md shadow-gray-200 rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
                 <div className="flex flex-col gap-3 items-start justify-between flex-wrap ">
                   <div className="w-full flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold  overflow-hidden whitespace-nowrap text-ellipsis">{w.name}</h3>
-                    <p className="text-xs border border-border py-0.5 px-1 rounded-full">{(wsUser?.memberRole ?? "MEMBER").toLocaleLowerCase()}</p>
+                    <h3 className="text-base font-semibold  overflow-hidden whitespace-nowrap text-ellipsis">{p.name}</h3>
                   </div>
-                  <p className={`text-xs ${wsUser?.status === "ACTIVE" ? "text-success" : ""} ${wsUser?.status === "REMOVED" ? "text-danger" : ""} ${wsUser?.status === "SUSPENDED" ? "text-yellow-500" : ""} ${wsUser?.status === "INVITED" ? "text-blue-500" : ""}`}>{wsUser?.status ?? "-"}
-                  </p>
-                  <p className="text-sm">
-                    {w.members.length} {w.members.length === 1 ? "member" : "members"}
+                  <p className="text-xs overflow-hidden whitespace-nowrap text-ellipsis">
+                    Created by: <span className="text-base">{p.createdBy.username}</span>
                   </p>
                   <p className="text-xs font-jetbrains min-h-10">
-                    <span className="text-xs font-inter">Joined: </span>
+                    <span className="text-xs font-inter">Created: </span>
                     {joinedDate ?? "-"}
                   </p>
                 </div>
@@ -73,6 +73,6 @@ export default function ProjectsPage() {
         }
 
       </div>
-    </div>
+    </div >
   )
 }

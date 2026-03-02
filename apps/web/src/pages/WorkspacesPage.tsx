@@ -38,7 +38,9 @@ export default function WorkspacesPage() {
         <h1 className="text-2xl font-bold">Workspaces</h1>
         <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create workspace
         </button>
-        <p className="text-xs">Select a workspace to continue</p>
+        {data.length > 0 &&
+          <p className="text-xs">Select a workspace to continue</p>
+        }
       </div>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
         {
@@ -48,7 +50,7 @@ export default function WorkspacesPage() {
               ? formatter.format(new Date(wsUser.joinedAt)) : null;
             return (
               <Link
-                to={`/workspace/${w.id}`}
+                to={`${w.id}/projects`}
                 key={w.id}
                 className="p-4 bg-card shadow-md shadow-gray-200 rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
                 <div className="flex flex-col gap-3 items-start justify-between flex-wrap ">
