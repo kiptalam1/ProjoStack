@@ -210,6 +210,14 @@ export async function getWorkspaceProjects(
       where: {
         workspaceId,
       },
+      include: {
+        createdBy: {
+          select: {
+            username: true,
+           }
+          }
+        }
+      
     });
 
     return res.status(200).json({ data: projects });
