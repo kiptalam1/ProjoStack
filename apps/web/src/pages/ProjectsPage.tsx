@@ -3,7 +3,7 @@ import useWorkspaces from "../features/workspaces/hooks/useWorkspaces"
 import { useAuth } from "../auth/useAuth"
 import { Loader2 } from "lucide-react";
 
-export default function WorkspacesPage() {
+export default function ProjectsPage() {
   const { user, loading } = useAuth();
   const { isPending, data, isError, error } = useWorkspaces()
 
@@ -35,10 +35,10 @@ export default function WorkspacesPage() {
   return (
     <div className="w-full h-full space-y-4">
       <div className="space-y-5">
-        <h1 className="text-2xl font-bold">Workspaces</h1>
-        <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create workspace
+        <h1 className="text-2xl font-bold">Projects</h1>
+        <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create Project
         </button>
-        <p className="text-xs">Select a workspace to continue</p>
+        <p className="text-xs">Select a project to continue</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
         {

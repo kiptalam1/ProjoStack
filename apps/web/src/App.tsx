@@ -1,8 +1,9 @@
 import { Routes, Route, Outlet, Navigate } from "react-router";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import WorkspacesPage from "./pages/WorkspacesPage"
-import DashboardPage from "./pages/DashboardPage"
+import WorkspacesPage from "./pages/WorkspacesPage";
+import ProjectsPage from "./pages/ProjectsPage";
+import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "sonner";
 import AppLayout from "./layouts/AppLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -32,6 +33,7 @@ function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="workspaces" element={<WorkspacesPage />} />
+            <Route path="projects" element={<ProjectsPage />} />
           </Route>
         </Route>
       </Routes>
