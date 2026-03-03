@@ -131,6 +131,13 @@ export async function getAllTasks(
       where: {
         projectId: project.id,
       },
+      include: {
+        createdBy: {
+          select: {
+            username: true,
+          },
+        },
+      },
     });
 
     return res.status(200).json({
