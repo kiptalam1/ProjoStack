@@ -7,6 +7,7 @@ import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "sonner";
 import AppLayout from "./layouts/AppLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import ProjectTasksPage from "./pages/ProjectTasksPage";
 
 function AuthLayout() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="workspaces">
               <Route index element={<WorkspacesPage />} />
               <Route path=":workspaceId/projects" element={<WorkspaceProjectsPage />} />
+              <Route path=":workspaceId/projects/:projectId/tasks" element={<ProjectTasksPage />} />
             </Route>
             {/*<Route path="projects" element={<ProjectsPage />} />*/}
             {/*<Route path="*" element={<NotFoundPage />} />*/}

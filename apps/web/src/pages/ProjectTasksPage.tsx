@@ -1,12 +1,12 @@
 import { Link, useParams } from "react-router"
 import { useAuth } from "../auth/useAuth"
 import { Loader2 } from "lucide-react";
-import { useGetProjects } from "../features/projects/hooks/useProjects";
+import { useGetProjectTasks } from "../features/tasks/hooks/useTasks";
 
-export default function WorkspaceProjectsPage() {
+export default function ProjectTasksPage() {
   const { loading } = useAuth();
-  const { workspaceId } = useParams();
-  const { isPending, data, isError, error } = useGetProjects(workspaceId as string)
+  const { projectId } = useParams();
+  const { isPending, data, isError, error } = useGetProjectTasks(projectId as string)
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -36,34 +36,38 @@ export default function WorkspaceProjectsPage() {
   return (
     <div className="w-full h-full space-y-4">
       <div className="space-y-5">
-        <h1 className="text-2xl font-bold">Projects</h1>
-        <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create Project
+        <h1 className="text-2xl font-bold">Tasks</h1>
+        <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create Task
         </button>
         {
           data.length > 0 &&
-          <p className="text-xs">Select a project to continue</p>
+          <p className="text-xs">Select a task to continue</p>
         }
       </div>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
         {
-          data?.map((p) => {
-            const joinedDate = p.createdAt
-              ? formatter.format(new Date(p.createdAt)) : null;
+          data?.map((t) => {
+            const createdDate = t.createdAt
+              ? formatter.format(new Date(t.createdAt)) : null;
             return (
               <Link
-                to={`/workspaces/${p.workspaceId}/projects/${p.id}/tasks`}
-                key={p.id}
+                to={`project/${t.id}/tasks`}
+                key={t.id}
                 className="p-4 bg-card shadow-md shadow-gray-200 rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
                 <div className="flex flex-col gap-3 items-start justify-between flex-wrap ">
                   <div className="w-full flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold  overflow-hidden whitespace-nowrap text-ellipsis">{p.name}</h3>
+                    <h3 className="text-base font-semibold  overflow-hidden whitespace-nowrap text-ellipsis">{t.title}</h3>
+                    <p className={`text-xs ${t.status === "COMPLETE" ? "text-success" : ""}  ${t.status === "PENDING" ? "text-yellow-500" : ""} ${t.status === "STARTED" ? "text-blue-500" : ""}`}>{t.status ?? "-"}
+                    </p>
+
                   </div>
+
                   <p className="text-xs overflow-hidden whitespace-nowrap text-ellipsis">
-                    Created by: <span className="text-base">{p.createdBy.username}</span>
+                    Created by: <span className="text-base">{t.createdBy.username}</span>
                   </p>
                   <p className="text-xs font-jetbrains min-h-10">
                     <span className="text-xs font-inter">Created: </span>
-                    {joinedDate ?? "-"}
+                    {createdDate ?? "-"}
                   </p>
                 </div>
 
