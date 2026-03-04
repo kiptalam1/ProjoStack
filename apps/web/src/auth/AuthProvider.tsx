@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthLoading(true)
       try {
         const res = await api.get("/auth/me");
-        console.log(res.data.data)
         setUser(res.data.data);
       } catch (error: unknown) {
         setUser(null);

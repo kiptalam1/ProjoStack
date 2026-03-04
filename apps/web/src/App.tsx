@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import AppLayout from "./layouts/AppLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ProjectTasksPage from "./pages/ProjectTasksPage";
+import PublicOnlyRoute from "./routes/PublicOnlyRoute";
 
 function AuthLayout() {
   return (
@@ -23,9 +24,11 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="auth" element={<AuthLayout />}>
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
+        <Route element={<PublicOnlyRoute />} >
+          <Route path="auth" element={<AuthLayout />}>
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+          </Route>
         </Route>
 
         {/* protected routes */}
