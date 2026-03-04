@@ -23,20 +23,16 @@ import {
 const isProd = process.env.NODE_ENV === "production";
 
 // get Me;
-export async function getMe(
+export async function getCurrentUser(
   req: Request,
   res: Response,
 ): Promise<Response | void> {
   try {
-    const token = req.cookies.accessToken;
-    if (!token) return res.status(401).json({ error: "Unauthorized!" });
-    const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string);
-    if (decoded === "string")
-      return res.status(401).json({ error: "Unauthorized!" });
-    const payload = decoded as Payload;
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized!" });
     const user = await prisma.user.findUnique({
       where: {
-        id: payload.id,
+        id: userId,
       },
       select: {
         id: true,

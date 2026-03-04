@@ -9,10 +9,7 @@ import projectRoutes from "./routes/project.routes.js";
 import taskRoutes from "./routes/task.routes.js";
 
 // limiter
-import {
-  authLimiter,
-  apiLimiter,
-} from "./middlewares/rateLimit.middlewares.js";
+import { apiLimiter } from "./middlewares/rateLimit.middlewares.js";
 
 // create express app;
 const app = express();
@@ -23,19 +20,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(helmet({}));
 app.use(
-	cors({
-		origin: "http://localhost:3000", // or 5173 if Vite default
-		credentials: true,
-		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-		allowedHeaders: ["Content-Type", "Authorization"],
-	}),
+  cors({
+    origin: "http://localhost:3000", // or 5173 if Vite default
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
 );
 app.use(cookieParser());
 
-// explicitly handle preflight 
+// explicitly handle preflight
 // app.options("/.*/", cors());
 // routes
-app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/workspaces", apiLimiter, workspaceRoutes);
 app.use("/api/projects", apiLimiter, projectRoutes);
 app.use("/api/tasks", apiLimiter, taskRoutes);
