@@ -22,6 +22,41 @@ import {
 
 const isProd = process.env.NODE_ENV === "production";
 
+// get Me;
+export async function getMe(
+  req: Request,
+  res: Response,
+): Promise<Response | void> {
+  try {
+    const token = req.cookies.accessToken;
+    if (!token) return res.status(401).json({ error: "Unauthorized!" });
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string);
+    if (decoded === "string")
+      return res.status(401).json({ error: "Unauthorized!" });
+    const payload = decoded as Payload;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: payload.id,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+    if (!user) return res.status(404).json({ error: "User not found." });
+    return res.status(200).json({
+      data: user,
+    });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
+
 // register user logic;
 export async function registerUser(
   req: Request,
@@ -188,17 +223,17 @@ export async function logoutUser(
     }
   }
   res.clearCookie("accessToken", {
-		secure: isProd,
-		sameSite: "strict",
-		httpOnly: true,
-		path: "/",
-	});
+    secure: isProd,
+    sameSite: "strict",
+    httpOnly: true,
+    path: "/",
+  });
   res.clearCookie("refreshToken", {
-		secure: isProd,
-		sameSite: "strict",
-		httpOnly: true,
-		path: "/api/auth",
-	});
+    secure: isProd,
+    sameSite: "strict",
+    httpOnly: true,
+    path: "/api/auth",
+  });
   return res.status(200).json({ message: "Logged out successfully." });
 }
 
