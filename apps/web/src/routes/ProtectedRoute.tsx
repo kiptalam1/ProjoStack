@@ -3,13 +3,13 @@ import { useAuth } from "../auth/useAuth"
 import { Loader } from "lucide-react";
 
 export default function ProtectedRoutes() {
-  const { user, loading } = useAuth();
+  const { user, isAuthLoading } = useAuth();
 
-  if (loading) {
+  if (isAuthLoading) {
     return <div className="mx-auto text-center">{<Loader size={12} className="animate-spin mx-auto" />}</div>
   }
 
-  if (!loading && !user) {
+  if (!user) {
     return <Navigate to="/auth/login" replace />
   }
   return <Outlet />

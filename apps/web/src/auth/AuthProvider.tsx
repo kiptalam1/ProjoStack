@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AxiosError, type AxiosResponse } from "axios";
 import { toast } from "sonner";
 import api from "../api/api";
@@ -22,9 +22,32 @@ const getErrorMessage = (err: AxiosError<AuthError>): string => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const getMe = async () => {
+      setIsAuthLoading(true)
+      try {
+        const res = await api.get("/auth/me");
+        console.log(res.data.data)
+        setUser(res.data.data);
+      } catch (error: unknown) {
+        setUser(null);
+        const msg = error instanceof AxiosError
+          ? getErrorMessage(error as AxiosError<AuthError>)
+          : error instanceof Error
+            ? error.message
+            : String(error);
+        console.error(msg);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    }
 
+    getMe()
+
+  }, []);
 
   const login = async (data: LoginDataType): Promise<void> => {
     setLoading(true);
@@ -88,7 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ loading, user, login, register, logoutUser }}>
+    <AuthContext.Provider value={{ isAuthLoading, loading, user, login, register, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );

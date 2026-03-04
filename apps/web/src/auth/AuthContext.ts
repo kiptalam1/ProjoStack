@@ -21,6 +21,7 @@ export type RegisterDataType = {
 
 type AuthContextType = {
   loading: boolean;
+  isAuthLoading: boolean;
   user: User | null;
   login: (data: LoginDataType) => Promise<void>;
   register: (data: RegisterDataType) => Promise<boolean | void>;
