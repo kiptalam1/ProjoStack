@@ -19,3 +19,12 @@ export const apiLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: "Too many requests. Slow down." },
 });
+
+// moderate limiter for refresh;
+export const refreshLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 30, // 30 refresh attempts
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many refresh attempts." },
+});
