@@ -4,7 +4,7 @@ type ModalProps = {
 	isOpen: boolean;
 	setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
-export default function CreateProjectModal({ isOpen, setIsOpen }: ModalProps) {
+export default function CreateTaskModal({ isOpen, setIsOpen }: ModalProps) {
 	if (!isOpen) {
 		return null;
 	}
@@ -16,10 +16,10 @@ export default function CreateProjectModal({ isOpen, setIsOpen }: ModalProps) {
 			<form
 				onClick={(e) => e.stopPropagation()}
 				className=" max-w-md w-full sm:w-sm md:w-md bg-card shadow-md shadow-gray-200 rounded-xl p-4">
-				<h2 className="font-semibold text-lg">Create a Project</h2>
+				<h2 className="font-semibold text-lg">Create a Task</h2>
 				<div className="flex flex-col my-5 gap-2 ">
 					<label htmlFor="name" className="text-sm">
-						Enter Project name:
+						Enter Task name:
 					</label>
 					<input
 						id="name"

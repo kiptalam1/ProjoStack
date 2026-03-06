@@ -34,7 +34,7 @@ export default function CreateWorkspaceModal({
 					<button
 						type="button"
 						onClick={() => setIsOpen(false)}
-						className="bg-gray-500 rounded-md text-white px-1 py-0.5 text-sm font-semibold hover:bg-red-400 transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed">
+						className="bg-inherit border border-muted text-text rounded-md px-1 py-0.5 text-sm hover:bg-red-400 hover:border-white transition-colors duration-150 cursor-pointer disabled:cursor-not-allowed">
 						Cancel
 					</button>
 					<button
