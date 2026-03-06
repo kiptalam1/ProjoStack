@@ -19,7 +19,7 @@ export default function CreateTaskModal({ isOpen, setIsOpen }: ModalProps) {
 				<h2 className="font-semibold text-lg">Create a Task</h2>
 				<div className="flex flex-col my-5 gap-2 ">
 					<label htmlFor="name" className="text-sm">
-						Enter Task name:
+						Enter Task title:
 					</label>
 					<input
 						id="name"
