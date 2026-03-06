@@ -2,8 +2,11 @@ import { Link } from "react-router"
 import useWorkspaces from "../features/workspaces/hooks/useWorkspaces"
 import { useAuth } from "../auth/useAuth"
 import { Loader2 } from "lucide-react";
+import CreateWorkspaceForm from "../components/forms/CreateWorkspaceForm";
+import { Activity, useState } from "react";
 
 export default function WorkspacesPage() {
+  const [isOpen, setIsOpen] = useState(false)
   const { user, loading } = useAuth();
   const { isPending, data, isError, error } = useWorkspaces()
 
@@ -36,8 +39,14 @@ export default function WorkspacesPage() {
     <div className="w-full h-full space-y-4">
       <div className="space-y-5">
         <h1 className="text-2xl font-bold">Workspaces</h1>
-        <button type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create workspace
+        <button onClick={() => setIsOpen(true)} type="button" className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">Create workspace
         </button>
+
+        <Activity mode={isOpen ? "visible" : "hidden"} >
+          <CreateWorkspaceForm isOpen={isOpen} setIsOpen={setIsOpen} />
+        </Activity>
+
+
         {data.length > 0 &&
           <p className="text-xs">Select a workspace to continue</p>
         }
