@@ -16,3 +16,18 @@ export async function getWorkSpaces(): Promise<WorkspacesTypes[]> {
     throw new Error("Unexpected error occurred.");
   }
 }
+
+export async function createWorkspace(name: string): Promise<WorkspacesTypes> {
+  try {
+    const res = await api.post("/workspaces/create", { name });
+    return res.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Unexpected error occurred.");
+  }
+}
