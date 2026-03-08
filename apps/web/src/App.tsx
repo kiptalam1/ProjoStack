@@ -2,6 +2,7 @@ import { Routes, Route, Outlet, Navigate } from "react-router";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import WorkspacesPage from "./pages/WorkspacesPage";
+import ProjectsPage from "./pages/ProjectsPage";
 import WorkspaceProjectsPage from "./pages/WorkspaceProjectsPage";
 import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "sonner";
@@ -41,7 +42,7 @@ function App() {
               <Route path=":workspaceId/projects" element={<WorkspaceProjectsPage />} />
               <Route path=":workspaceId/projects/:projectId/tasks" element={<ProjectTasksPage />} />
             </Route>
-            {/*<Route path="projects" element={<ProjectsPage />} />*/}
+            <Route path="projects" element={<ProjectsPage />} />
             {/*<Route path="*" element={<NotFoundPage />} />*/}
           </Route>
         </Route>
