@@ -27,6 +27,7 @@ export default function CreateProjectModal({ isOpen, setIsOpen }: ModalProps) {
 
     mutate({ workspaceId, name: formData.name }, {
       onSuccess: () => {
+        setFormData({ name: "" })
         setIsOpen(false)
       }
     })

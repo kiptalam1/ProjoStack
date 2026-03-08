@@ -29,6 +29,7 @@ export default function CreateWorkspaceModal({
     event.preventDefault();
     mutate(formData.name, {
       onSuccess: () => {
+        setFormData({ name: "" })
         setIsOpen(false);
       }
     });
