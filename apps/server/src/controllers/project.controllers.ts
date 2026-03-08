@@ -14,37 +14,36 @@ export async function getAllUserProjects(
       return res.status(401).json({ error: "Unauthorized!" });
     }
 
-    // const workspaces = await prisma.workspace.findMany({
-    //   where: {
-    //     members: {
-    //       some: {
-    //         userId: user.id
-    //       }
-    //
-    //     },
-    //   },
-    //   select: {
-    //     projects: true,
-    //     id: true
-    //   }
-    // })
-
     const projects = await prisma.project.findMany({
       where: {
         workspace: {
           members: {
             some: {
               userId: user.id,
-            }
-          }
+            },
+          },
+        },
+      },
+      include: {
+        workspace: {
+          select: {
+            id:true,
+          name:true
         }
+        },
+        createdBy: {
+          select: {
+            username: true,
+            role: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: "desc"
-      }
+        createdAt: "desc",
+      },
     });
     return res.status(200).json({
-      projects,
+      data: projects,
     });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
