@@ -90,3 +90,7 @@ DELETE http://localhost:5000/api/tasks/project/a57e3b81-a212-4691-8b4d-f983a07cb
 # @attach-cookie-jar
 GET http://localhost:5000/api/auth/me
 
+### 
+# @jq .
+# @attach-cookie-jar
+GET http://localhost:5000/api/projects/all

@@ -3,6 +3,56 @@ import * as z from "zod";
 import { ProjectSchema } from "@projo/contracts";
 import { prisma } from "../lib/prisma.js";
 
+// GET all user projects;
+export async function getAllUserProjects(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const user = req.user;
+    if (!user?.id) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+
+    // const workspaces = await prisma.workspace.findMany({
+    //   where: {
+    //     members: {
+    //       some: {
+    //         userId: user.id
+    //       }
+    //
+    //     },
+    //   },
+    //   select: {
+    //     projects: true,
+    //     id: true
+    //   }
+    // })
+
+    const projects = await prisma.project.findMany({
+      where: {
+        workspace: {
+          members: {
+            some: {
+              userId: user.id,
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+    return res.status(200).json({
+      projects,
+    });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
+
 // UPDATE project in workspace;
 const UpdateProjectSchema = ProjectSchema.pick({ name: true });
 export async function updateProjectInWorkspace(
@@ -214,10 +264,9 @@ export async function getWorkspaceProjects(
         createdBy: {
           select: {
             username: true,
-           }
-          }
-        }
-      
+          },
+        },
+      },
     });
 
     return res.status(200).json({ data: projects });

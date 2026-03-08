@@ -5,6 +5,7 @@ import {
   getWorkspaceProjects,
   deleteProjectInWorkspace,
   updateProjectInWorkspace,
+  getAllUserProjects,
 } from "../controllers/project.controllers.js";
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.post(
   createProjectInWorkspace,
 );
 router.get("/workspace/:workspaceId", isAuthenticated, getWorkspaceProjects);
+router.get("/all", isAuthenticated, getAllUserProjects);
 router.delete(
   "/workspace/:workspaceId/project/:projectId",
   isAuthenticated,
