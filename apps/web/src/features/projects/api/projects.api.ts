@@ -78,3 +78,28 @@ export async function getAllProjects(): Promise<ProjectsResponse[]> {
     throw new Error("Unexpected error occurred");
   }
 }
+
+type DeleteProjectInput = {
+  projectId: string;
+  workspaceId: string;
+};
+export async function deleteProject({
+  workspaceId,
+  projectId,
+}: DeleteProjectInput) {
+  try {
+    const res = await api.delete(
+      `/projects/workspace/${workspaceId}/project/${projectId}`,
+    );
+    return res.data.message;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+
+    if (error instanceof Error) {
+      throw Error(error.message);
+    }
+    throw new Error("Unexpected error occurred");
+  }
+}

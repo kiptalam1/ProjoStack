@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 type ConfirmModalProps = {
   open: boolean;
@@ -24,7 +24,7 @@ export default function ConfirmModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
 
       <div className="bg-card border border-border rounded-xl p-6 w-full max-w-sm space-y-4">
 
@@ -46,7 +46,7 @@ export default function ConfirmModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-1 text-sm border border-border rounded-lg"
+            className="px-3 py-1 text-sm border border-border rounded-lg cursor-pointer hover:opacity-50 transition-opacity duration-150"
           >
             {cancelText}
           </button>
@@ -55,9 +55,9 @@ export default function ConfirmModal({
             type="button"
             disabled={loading}
             onClick={onConfirm}
-            className="px-3 py-1 text-sm bg-danger text-white rounded-lg disabled:opacity-60"
+            className="px-3 py-1 text-sm bg-danger text-white rounded-lg cursor-pointer disabled:cursor-not-allowed hover:opacity-70 transition-opacity duration-150"
           >
-            {loading ? "Processing..." : confirmText}
+            {loading ? <Loader2 size={16} className="animate-spin" /> : confirmText}
           </button>
         </div>
 

@@ -4,12 +4,17 @@ import { Edit, Loader2, Trash } from "lucide-react";
 import { useGetProjects } from "../features/projects/hooks/useProjects";
 import { Activity, useState } from "react";
 import CreateProjectModal from "../components/modals/CreateProjectModal";
+import ConfirmModal from "../components/modals/ConfirmModal";
+import useDeleteProject from "../features/projects/hooks/useDeleteProject";
 
 export default function WorkspaceProjectsPage() {
   const { loading, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const { workspaceId } = useParams();
-  const { isPending, data, isError, error } = useGetProjects(workspaceId as string)
+  const { isPending, data, isError, error } = useGetProjects(workspaceId as string);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { isPending: isDeleting, mutate: deleteProject } = useDeleteProject();
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -34,6 +39,14 @@ export default function WorkspaceProjectsPage() {
     )
   }
 
+  function handleDelete(projectId: string, workspaceId: string) {
+    setDeletingId(projectId);
+    deleteProject({ projectId, workspaceId }, {
+      onSettled: () => {
+        setDeletingId(null);
+      }
+    })
+  }
 
 
   return (
@@ -82,11 +95,20 @@ export default function WorkspaceProjectsPage() {
                   </p>
                 </div>
               </Link>
+              <ConfirmModal
+                open={showConfirmModal}
+                title="Delete Project"
+                description="This action will permanently delete project and all related data."
+                loading={isDeleting}
+                onConfirm={() => handleDelete(p.id, p.workspaceId)}
+                onClose={() => setShowConfirmModal(false)}
+              />
 
               <div className="flex items-center justify-between gap-3 w-full">{
                 p.createdById === user?.id && (
                   <>  <button
                     type="button"
+                    onClick={() => setShowConfirmModal(true)}
                     className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
                     <button
                       type="button"
