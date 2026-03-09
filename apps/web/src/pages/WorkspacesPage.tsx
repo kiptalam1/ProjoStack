@@ -5,13 +5,15 @@ import { Edit, Loader2, Trash } from "lucide-react";
 import CreateWorkspaceModal from "../components/modals/CreateWorkspaceModal";
 import { Activity, useState, } from "react";
 import useDeleteWorkspace from "../features/workspaces/hooks/useDeleteWorkspace";
+import ConfirmModal from "../components/modals/ConfirmModal";
 
 export default function WorkspacesPage() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, loading } = useAuth();
   const { isPending, data, isError, error } = useWorkspaces()
   const { isPending: isDeleting, mutate: deleteWs } = useDeleteWorkspace();
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -60,6 +62,11 @@ export default function WorkspacesPage() {
         <Activity mode={isOpen ? "visible" : "hidden"}>
           <CreateWorkspaceModal isOpen={isOpen} setIsOpen={setIsOpen} />
         </Activity>
+        {
+          data.length === 0 && (
+            <p className="text-sm italic text-text">No workspaces yet.</p>
+          )
+        }
 
         {data.length > 0 && (
           <p className="text-xs">Select a workspace to continue</p>
@@ -102,15 +109,25 @@ export default function WorkspacesPage() {
                   </p>
                 </div>
               </Link>
+              <ConfirmModal
+                open={showConfirmModal}
+                title="Delete Workspace!"
+                description="This action will permanently delete workspace and related data."
+                loading={isDeleting}
+                onClose={() => setShowConfirmModal(false)}
+                onConfirm={() => {
+                  handleDelete(w.id);
+                  setShowConfirmModal(false)
+                }}
+              />
               <div className="flex items-center justify-between gap-3 w-full">{
                 w.creatorId === user?.id && (
                   <>  <button
                     type="button"
                     disabled={isDeleting && deletingId === w.id}
-                    onClick={() => handleDelete(w.id)}
+                    onClick={() => setShowConfirmModal(true)}
                     className="text-gray-400 hover:text-red-500 disabled:cursor-not-allowed transition-colors duration-150 cursor-pointer">
-                    {(isDeleting && deletingId === w.id) ? (<Loader2 size={16} className="animate-spin" />) : (
-                      <Trash size={16} />)}</button>
+                    <Trash size={16} /></button>
                     <button
                       type="button"
                       className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer"><Edit size={16} /></button>

@@ -49,6 +49,13 @@ export default function ProjectTasksPage() {
         <Activity mode={isOpen ? "visible" : "hidden"}>
           <CreateTaskModal isOpen={isOpen} setIsOpen={setIsOpen} />
         </Activity>
+        {
+          data.length === 0 && (
+            <p className="text-sm italic text-text">No tasks yet.</p>
+          )
+        }
+
+
         {data.length > 0 && (
           <p className="text-xs">Select a task to continue</p>
         )}

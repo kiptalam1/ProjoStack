@@ -1,5 +1,3 @@
-import { ListOrdered, Loader, Loader2 } from "lucide-react";
-import { useAuth } from "../auth/useAuth";
 import useGetAllProjects from "../features/projects/hooks/useGetAllProjects"
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 
@@ -22,12 +20,12 @@ export default function ProjectsPage() {
         isPending && <LoadingSpinner />
       }
       {
-        data?.length === 0 && (
+        !isPending && data?.length === 0 && (
           <p className="text-text text-sm italic">No projects yet.</p>
         )
       }
       {
-        data && (
+        !isPending && data && data.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-4">
             <table className="w-full table-auto border-collapse overflow-hidden">
               <thead className="text-sm border-b border-muted">

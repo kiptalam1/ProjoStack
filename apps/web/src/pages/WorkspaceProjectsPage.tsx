@@ -63,6 +63,11 @@ export default function WorkspaceProjectsPage() {
         <Activity mode={isOpen ? "visible" : "hidden"}>
           <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
         </Activity>
+        {
+          data.length === 0 && (
+            <p className="text-sm italic text-text">No projects yet.</p>
+          )
+        }
 
         {data.length > 0 && (
           <p className="text-xs">Select a project to continue</p>
@@ -100,7 +105,10 @@ export default function WorkspaceProjectsPage() {
                 title="Delete Project"
                 description="This action will permanently delete project and all related data."
                 loading={isDeleting}
-                onConfirm={() => handleDelete(p.id, p.workspaceId)}
+                onConfirm={() => {
+                  handleDelete(p.id, p.workspaceId)
+                  setShowConfirmModal(false)
+                }}
                 onClose={() => setShowConfirmModal(false)}
               />
 
@@ -109,6 +117,7 @@ export default function WorkspaceProjectsPage() {
                   <>  <button
                     type="button"
                     onClick={() => setShowConfirmModal(true)}
+                    disabled={deletingId === p.id}
                     className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
                     <button
                       type="button"
