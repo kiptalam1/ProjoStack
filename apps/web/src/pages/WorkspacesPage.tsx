@@ -3,12 +3,15 @@ import useWorkspaces from "../features/workspaces/hooks/useWorkspaces"
 import { useAuth } from "../auth/useAuth"
 import { Edit, Loader2, Trash } from "lucide-react";
 import CreateWorkspaceModal from "../components/modals/CreateWorkspaceModal";
-import { Activity, useState } from "react";
+import { Activity, useState, } from "react";
+import useDeleteWorkspace from "../features/workspaces/hooks/useDeleteWorkspace";
 
 export default function WorkspacesPage() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, loading } = useAuth();
   const { isPending, data, isError, error } = useWorkspaces()
+  const { isPending: isDeleting, mutate: deleteWs } = useDeleteWorkspace();
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -33,6 +36,14 @@ export default function WorkspacesPage() {
     )
   }
 
+  function handleDelete(id: string) {
+    setDeletingId(id);
+    deleteWs(id, {
+      onSettled: () => {
+        setDeletingId(null);
+      }
+    });
+  }
 
 
   return (
@@ -95,7 +106,11 @@ export default function WorkspacesPage() {
                 w.creatorId === user?.id && (
                   <>  <button
                     type="button"
-                    className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
+                    disabled={isDeleting && deletingId === w.id}
+                    onClick={() => handleDelete(w.id)}
+                    className="text-gray-400 hover:text-red-500 disabled:cursor-not-allowed transition-colors duration-150 cursor-pointer">
+                    {(isDeleting && deletingId === w.id) ? (<Loader2 size={16} className="animate-spin" />) : (
+                      <Trash size={16} />)}</button>
                     <button
                       type="button"
                       className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer"><Edit size={16} /></button>
