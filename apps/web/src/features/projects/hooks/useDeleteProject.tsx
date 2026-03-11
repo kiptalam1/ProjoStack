@@ -11,7 +11,7 @@ export default function useDeleteProject() {
       toast.success(data ?? "Project deleted successfully.");
       queryClient.invalidateQueries({ queryKey: ['projects'] });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error(error);
       toast.error(error.message);
     }

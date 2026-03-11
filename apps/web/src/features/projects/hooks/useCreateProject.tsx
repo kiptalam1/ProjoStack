@@ -13,7 +13,7 @@ export function useCreateProject() {
       queryClient.invalidateQueries({ queryKey: ['projects'] })
       toast.success("Project created successfully")
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast.error(error.message);
     }
   });

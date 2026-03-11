@@ -103,3 +103,37 @@ export async function deleteProject({
     throw new Error("Unexpected error occurred");
   }
 }
+
+type UpdateInput = {
+  workspaceId: string;
+  projectId: string;
+  name: string;
+};
+type UpdateResponse = {
+  message: string;
+  data: ProjectsTypes;
+};
+export async function updateProject({
+  workspaceId,
+  projectId,
+  name,
+}: UpdateInput): Promise<UpdateResponse> {
+  try {
+    const res = await api.put(
+      `/projects/workspace/${workspaceId}/project/${projectId}`,
+      {
+        name,
+      },
+    );
+    return res.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+
+    if (error instanceof Error) {
+      throw Error(error.message);
+    }
+    throw new Error("Unexpected error occurred");
+  }
+}

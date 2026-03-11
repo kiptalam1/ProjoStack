@@ -6,6 +6,7 @@ import { Activity, useState } from "react";
 import CreateProjectModal from "../components/modals/CreateProjectModal";
 import ConfirmModal from "../components/modals/ConfirmModal";
 import useDeleteProject from "../features/projects/hooks/useDeleteProject";
+import UpdateProjectModal from "../components/modals/UpdateProjectModal";
 
 export default function WorkspaceProjectsPage() {
   const { loading, user } = useAuth();
@@ -15,6 +16,7 @@ export default function WorkspaceProjectsPage() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { isPending: isDeleting, mutate: deleteProject } = useDeleteProject();
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -112,6 +114,15 @@ export default function WorkspaceProjectsPage() {
                 onClose={() => setShowConfirmModal(false)}
               />
 
+              <Activity mode={openUpdateModal ? "visible" : "hidden"}>
+                <UpdateProjectModal
+                  open={openUpdateModal}
+                  setOpenUpdate={setOpenUpdateModal}
+                  project={p}
+                />
+              </Activity>
+
+
               <div className="flex items-center justify-between gap-3 w-full">{
                 p.createdById === user?.id && (
                   <>  <button
@@ -121,6 +132,7 @@ export default function WorkspaceProjectsPage() {
                     className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
                     <button
                       type="button"
+                      onClick={() => setOpenUpdateModal(true)}
                       className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer"><Edit size={16} /></button>
                   </>
                 )
