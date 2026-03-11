@@ -1,7 +1,103 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
-import { TaskSchema } from "@projo/contracts";
+import { TaskSchema, UpdateTaskSchema } from "@projo/contracts";
 import * as z from "zod";
+
+// UPDATE a task;
+export async function updateTask(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const user = req.user;
+    const workspaceId = req.params.workspaceId as string;
+    const projectId = req.params.projectId as string;
+    const taskId = req.params.taskId as string;
+    const parsed = UpdateTaskSchema.safeParse(req.body);
+
+    if (!user?.id) {
+      return res.status(401).json({ error: "Unauthorized!" });
+    }
+
+    if (!projectId || !taskId || !workspaceId) {
+      return res
+        .status(400)
+        .json({ error: "Invalid workspace or project or task ID!" });
+    }
+
+    // validate user input;
+    if (!parsed.success) {
+      const { formErrors, fieldErrors } = z.flattenError(parsed.error);
+      const msgs = [
+        ...Object.values(fieldErrors).flat(),
+        ...Object.values(formErrors).flat(),
+      ];
+      return res.status(400).json({ error: msgs[0] });
+    }
+    // check if user is a member;
+    const memberShip = await prisma.workspaceMember.findFirst({
+      where: {
+        workspaceId,
+        userId: user.id,
+      },
+    });
+    if (!memberShip) {
+      return res.status(403).json({ error: "You are not a member!" });
+    }
+    // check if poject exists;
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+        workspaceId,
+      },
+    });
+    if (!project) {
+      return res.status(404).json({ error: "Project not found." });
+    }
+    // check if task exists;
+    const task = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+        projectId: projectId,
+      },
+    });
+    if (!task) {
+      return res.status(404).json({ error: "Task not found!" });
+    }
+
+    // check if task belongs to user or admin;
+    const allowed = task.createdById === user.id || user.role === "ADMIN";
+    if (!allowed) {
+      return res.status(403).json({ error: "Permission denied!" });
+    }
+
+    // build update payload;
+    const { title, status } = parsed.data;
+    const updateData: {
+      title?: string;
+      status?: "PENDING" | "STARTED" | "COMPLETE";
+    } = {};
+    if (title !== undefined) updateData.title = title;
+    if (status !== undefined) updateData.status = status;
+
+    // if all above passes;
+    const taskUpdated = await prisma.task.update({
+      where: {
+        id: task.id,
+      },
+      data: updateData,
+    });
+
+    return res.status(200).json({
+      message: "Task updated successfully",
+      data: taskUpdated,
+    });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
 
 // DELETE a task;
 export async function deleteATask(

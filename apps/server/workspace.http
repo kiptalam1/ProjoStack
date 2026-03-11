@@ -94,3 +94,13 @@ GET http://localhost:5000/api/auth/me
 # @jq .
 # @attach-cookie-jar
 GET http://localhost:5000/api/projects/all
+
+### 
+# @jq . 
+# @attach-cookie-jar
+PATCH http://localhost:5000/api/tasks/workspace/92e99936-9d3b-4681-a872-21a138490a9d/project/e8b1ee92-1f91-4046-84d9-05bcf91e06e5/task/a6a21938-7f3d-4c3b-897a-ed2eeb4dbdf0
+Content-Type: application/json
+
+{ 
+  "status": "COMPLETE"
+}

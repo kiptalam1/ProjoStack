@@ -70,9 +70,28 @@ export const TaskSchema = z.object({
     }),
 });
 
+export const UpdateTaskSchema = z.object({
+  title: z
+    .string({ error: "Title must be a string." })
+    .trim()
+    .min(3, { error: "Title must be at least 3 characters long." })
+    .max(72, { error: "Title is too long!" })
+    .regex(/^[a-zA-Z0-9]+([ _-][a-zA-Z0-9]+)*$/, {
+      error: "Title contains invalid characters.",
+    })
+    .optional(),
+
+  status: z
+    .enum(["PENDING", "STARTED", "COMPLETE"], {
+      error: "Status must be PENDING, STARTED, or COMPLETE.",
+    })
+    .optional(),
+});
+
 export type RegisterUserData = z.infer<typeof RegisterUserSchema>;
 export type LoginUserData = z.infer<typeof LoginUserSchema>;
 export type PayloadData = z.infer<typeof PayloadSchema>;
 export type WorkspaceData = z.infer<typeof WorkspaceSchema>;
 export type ProjectData = z.infer<typeof ProjectSchema>;
 export type TaskData = z.infer<typeof TaskSchema>;
+export type UpdateTaskdata = z.infer<typeof UpdateTaskSchema>;
