@@ -46,3 +46,31 @@ export async function deleteWorkspace(workspaceId: string) {
     throw new Error("Unexpected error occurred.");
   }
 }
+
+type UpdateResponse = {
+  message: string;
+  data: WorkspacesTypes;
+};
+type UpdateInput = {
+  name: string;
+  workspaceId: string;
+};
+export async function updateWorkspace({
+  workspaceId,
+  name,
+}: UpdateInput): Promise<UpdateResponse> {
+  try {
+    const res = await api.put(`/workspaces/update/${workspaceId}`, {
+      name,
+    });
+    return res.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Unexpected error occurred.");
+  }
+}
