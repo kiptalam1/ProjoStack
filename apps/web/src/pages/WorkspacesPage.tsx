@@ -6,6 +6,7 @@ import CreateWorkspaceModal from "../components/modals/CreateWorkspaceModal";
 import { Activity, useState, } from "react";
 import useDeleteWorkspace from "../features/workspaces/hooks/useDeleteWorkspace";
 import ConfirmModal from "../components/modals/ConfirmModal";
+import UpdateWorkspaceModal from "../components/modals/UpdateWorkspaceModal";
 
 export default function WorkspacesPage() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,6 +15,7 @@ export default function WorkspacesPage() {
   const { isPending: isDeleting, mutate: deleteWs } = useDeleteWorkspace();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -120,6 +122,17 @@ export default function WorkspacesPage() {
                   setShowConfirmModal(false)
                 }}
               />
+
+
+              <Activity mode={openUpdateModal ? "visible" : "hidden"}>
+                <UpdateWorkspaceModal
+                  open={openUpdateModal}
+                  setOpenUpdate={setOpenUpdateModal}
+                  workspace={w}
+                />
+              </Activity>
+
+
               <div className="flex items-center justify-between gap-3 w-full">{
                 w.creatorId === user?.id && (
                   <>  <button
@@ -130,6 +143,7 @@ export default function WorkspacesPage() {
                     <Trash size={16} /></button>
                     <button
                       type="button"
+                      onClick={() => setOpenUpdateModal(true)}
                       className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer"><Edit size={16} /></button>
                   </>
                 )
@@ -140,6 +154,8 @@ export default function WorkspacesPage() {
           );
         })}
       </div>
+
+
     </div>
   );
 }
