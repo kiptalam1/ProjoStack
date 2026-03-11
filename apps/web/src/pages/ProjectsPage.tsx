@@ -32,9 +32,9 @@ export default function ProjectsPage() {
                 <tr>
                   <th className="text-start p-2 font-medium">Name</th>
                   <th className="text-start p-2 font-medium">Workspace</th>
-                  <th className="text-start p-2 font-medium">Role</th>
+                  <th className="text-start p-2 font-medium hidden sm:block">Role</th>
                   <th className="text-start p-2 font-medium">Created By</th>
-                  <th className="text-start p-2 font-medium">Created At</th>
+                  <th className="text-start p-2 font-medium hidden sm:block">Created At</th>
                 </tr>
               </thead>
 
@@ -43,9 +43,9 @@ export default function ProjectsPage() {
                   <tr key={p.id} className="border-b border-border hover:bg-muted/20">
                     <td className="p-2">{p.name}</td>
                     <td className="p-2">{p.workspace.name}</td>
-                    <td className="p-2">{p.createdBy.role.toLowerCase()}</td>
+                    <td className="p-2 hidden sm:block">{p.createdBy.role.toLowerCase()}</td>
                     <td className="p-2">{p.createdBy.username}</td>
-                    <td className="p-2">
+                    <td className="p-2 hidden sm:block">
                       {new Date(p.createdAt).toLocaleString()}
                     </td>
                   </tr>
