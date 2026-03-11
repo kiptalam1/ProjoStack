@@ -6,6 +6,7 @@ import { Activity, useState } from "react";
 import CreateTaskModal from "../components/modals/CreateTaskModal";
 import ConfirmModal from "../components/modals/ConfirmModal";
 import useDeleteTask from "../features/tasks/hooks/useDeleteTask";
+import UpdateTaskModal from "../components/modals/UpdateTaskModal";
 
 export default function ProjectTasksPage() {
   const { loading, user } = useAuth();
@@ -14,7 +15,7 @@ export default function ProjectTasksPage() {
   const { isPending, data, isError, error } = useGetProjectTasks(projectId as string)
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { isPending: isDeleting, mutate: deleteTask } = useDeleteTask();
-  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -113,6 +114,14 @@ export default function ProjectTasksPage() {
                 onConfirm={() => handleDelete(t.projectId, t.id)}
               />
 
+              <Activity mode={openUpdateModal ? "visible" : "hidden"}>
+                <UpdateTaskModal
+                  open={openUpdateModal}
+                  setOpenUpdate={setOpenUpdateModal}
+                  task={t}
+                />
+              </Activity>
+
               <div className="flex items-center justify-between gap-3 w-full">{
                 t.createdById === user?.id && (
                   <>  <button
@@ -121,6 +130,7 @@ export default function ProjectTasksPage() {
                     className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
                     <button
                       type="button"
+                      onClick={() => setOpenUpdateModal(true)}
                       className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer"><Edit size={16} /></button>
                   </>
                 )
