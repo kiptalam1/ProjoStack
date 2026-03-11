@@ -4,12 +4,17 @@ import { Edit, Loader2, Trash } from "lucide-react";
 import { useGetProjectTasks } from "../features/tasks/hooks/useTasks";
 import { Activity, useState } from "react";
 import CreateTaskModal from "../components/modals/CreateTaskModal";
+import ConfirmModal from "../components/modals/ConfirmModal";
+import useDeleteTask from "../features/tasks/hooks/useDeleteTask";
 
 export default function ProjectTasksPage() {
   const { loading, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const { projectId } = useParams();
   const { isPending, data, isError, error } = useGetProjectTasks(projectId as string)
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { isPending: isDeleting, mutate: deleteTask } = useDeleteTask();
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -34,6 +39,13 @@ export default function ProjectTasksPage() {
     )
   }
 
+  function handleDelete(projectId: string, taskId: string) {
+    deleteTask({ projectId, taskId }, {
+      onSuccess: () => {
+        setShowConfirmModal(false);
+      }
+    })
+  }
 
 
   return (
@@ -92,11 +104,20 @@ export default function ProjectTasksPage() {
                   </p>
                 </div>
               </Link>
+              <ConfirmModal
+                open={showConfirmModal}
+                title="Delete Task!"
+                description="This action will permanently delete task and all related data."
+                loading={isDeleting}
+                onClose={() => setShowConfirmModal(false)}
+                onConfirm={() => handleDelete(t.projectId, t.id)}
+              />
 
               <div className="flex items-center justify-between gap-3 w-full">{
                 t.createdById === user?.id && (
                   <>  <button
                     type="button"
+                    onClick={() => setShowConfirmModal(true)}
                     className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
                     <button
                       type="button"

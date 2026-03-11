@@ -38,3 +38,28 @@ export async function createTask({
     throw new Error("Unexpected error occured");
   }
 }
+
+
+type DeleteTaskInput = {
+  projectId: string;
+  taskId: string;
+}
+
+type DeleteResponse = {
+  message: string;
+  task: TaskTypes;
+}
+export async function deleteTask({projectId, taskId}: DeleteTaskInput): Promise<DeleteResponse> {
+  try {
+    const res = await api.delete(`/tasks/project/${projectId}/task/${taskId}`)
+    return res.data.message;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+    if (error instanceof Error) {
+      throw Error(error.message);
+    }
+    throw new Error("Unexpected error occured");
+  }
+}
