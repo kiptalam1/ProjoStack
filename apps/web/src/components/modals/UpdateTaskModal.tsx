@@ -1,5 +1,6 @@
 import { type Dispatch, type SetStateAction, useState, type SyntheticEvent } from "react"
 import type { TaskTypes } from "../../features/tasks/api/tasks.types";
+import useUpdateTask from "../../features/tasks/hooks/useUpdateTask";
 
 
 type UpdateProps = {
@@ -16,18 +17,18 @@ export default function UpdateTaskModal({ open, setOpenUpdate, task }: UpdatePro
     title: task.title,
     status: task.status
   })
-  // const { mutate: updateTask, isPending: isUpdating } = useUpdateTask();
-  //
-  const isUpdating = true;
-  // function handleUpdate(event: SyntheticEvent<HTMLFormElement>) {
-  //   event.preventDefault();
-  //     updateTask({ projectId: task.projectId, title: formData.title, status: formData.status }, {
-  //       onSuccess: () => {
-  //         setOpenUpdate(false);
-  //       }
-  //     })
-  //   }
-  //
+  const { mutate: updateTask, isPending: isUpdating } = useUpdateTask();
+
+
+  function handleUpdate(event: SyntheticEvent<HTMLFormElement>) {
+    event.preventDefault();
+    updateTask({ workspaceId: task.workspaceId, projectId: task.projectId, taskId: task.id, title: formData.title, status: formData.status }, {
+      onSuccess: () => {
+        setOpenUpdate(false);
+      }
+    })
+  }
+
   if (!open) {
     return null;
   }
@@ -39,7 +40,7 @@ export default function UpdateTaskModal({ open, setOpenUpdate, task }: UpdatePro
       className="inset-0 bg-black/50 fixed backdrop-blur-md p-2 flex items-center justify-center z-50">
       <form
         onClick={(e) => e.stopPropagation()}
-        // onSubmit={handleUpdate}
+        onSubmit={handleUpdate}
         className="bg-card w-full sm:w-sm md:w-md max-w-lg rounded-lg p-4 flex flex-col gap-3 ">
         <h2 className="text-lg font-semibold">Update Task</h2>
         <div className="flex flex-col justify-center gap-1" >
