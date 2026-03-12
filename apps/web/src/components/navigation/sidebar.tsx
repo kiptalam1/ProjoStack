@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
 import { useAuth } from "../../auth/useAuth";
-import { X, SidebarOpen, SidebarClose, Settings, LayoutGrid, FolderKanban, Handshake, LogOut } from "lucide-react";
+import { X, SidebarOpen, SidebarClose, Settings, LayoutGrid, FolderKanban, Handshake, LogOut, ClipboardCheck, } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
 
@@ -71,6 +71,17 @@ export default function Sidebar({ showSidebar, setShowSidebar, onNavigate, onClo
             <span className={showSidebar ? "block" : "hidden"}> Projects</span>
 
           </NavLink>
+
+          <NavLink to={"/tasks/all"} onClick={onNavigate}
+            className={({ isActive }) =>
+              `${base} ${isActive ? active : inactive}`}
+          ><ClipboardCheck size={18} className="shrink-0" />
+
+            <span className={showSidebar ? "block" : "hidden"}>Tasks</span>
+
+          </NavLink>
+
+
         </nav>
 
 

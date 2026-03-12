@@ -104,3 +104,19 @@ export async function updateTask({
     throw new Error("Unexpected error occured");
   }
 }
+
+type AllTasksTypes = {};
+export async function getAllTasks(): Promise<AllTasksTypes[]> {
+  try {
+    const res = await api.get("/tasks/all");
+    return res.data.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+    if (error instanceof Error) {
+      throw Error(error.message);
+    }
+    throw new Error("Unexpected error occured");
+  }
+}

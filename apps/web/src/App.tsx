@@ -10,6 +10,7 @@ import AppLayout from "./layouts/AppLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ProjectTasksPage from "./pages/ProjectTasksPage";
 import PublicOnlyRoute from "./routes/PublicOnlyRoute";
+import TasksPage from "./pages/TasksPage";
 
 function AuthLayout() {
   return (
@@ -43,6 +44,7 @@ function App() {
               <Route path=":workspaceId/projects/:projectId/tasks" element={<ProjectTasksPage />} />
             </Route>
             <Route path="projects" element={<ProjectsPage />} />
+            <Route path="tasks/all" element={<TasksPage />} />
             {/*<Route path="*" element={<NotFoundPage />} />*/}
           </Route>
         </Route>
