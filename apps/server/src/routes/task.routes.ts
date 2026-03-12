@@ -4,6 +4,7 @@ import {
   createTask,
   deleteATask,
   getAllTasks,
+  getAllUserTasks,
   updateTask,
 } from "../controllers/task.controllers.js";
 
@@ -17,5 +18,6 @@ router.patch(
   isAuthenticated,
   updateTask,
 );
+router.get("/all", isAuthenticated, getAllUserTasks);
 
 export default router;

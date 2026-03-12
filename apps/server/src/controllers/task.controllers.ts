@@ -3,6 +3,60 @@ import { prisma } from "../lib/prisma.js";
 import { TaskSchema, UpdateTaskSchema } from "@projo/contracts";
 import * as z from "zod";
 
+// GET all tasks for ws the user is part of;
+export async function getAllUserTasks(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const user = req.user;
+    if (!user?.id) {
+      return res.status(401).json({
+        error: "Unauthorized!",
+      });
+    }
+    const tasks = await prisma.task.findMany({
+      where: {
+        workspace: {
+          members: {
+            some: {
+              userId: user.id,
+            },
+          },
+        },
+      },
+      include: {
+        workspace: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        createdBy: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      data: tasks
+    })
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(msg);
+    return res.status(500).json({ error: "Something went wrong." });
+  }
+}
+
 // UPDATE a task;
 export async function updateTask(
   req: Request,
