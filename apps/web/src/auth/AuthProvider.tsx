@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const navigate = useNavigate()
 
+
   useEffect(() => {
     const getMe = async () => {
       setIsAuthLoading(true)
@@ -102,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
       setUser(null);
       navigate("/auth/login");
+
     } catch (error: unknown) {
       const msg = error instanceof AxiosError ? getErrorMessage(error as AxiosError<AuthError>) : error instanceof Error ? error.message : String(error);
       console.error(msg);

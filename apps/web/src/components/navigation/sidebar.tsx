@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
-
-import { X, SidebarOpen, SidebarClose, Settings, LayoutGrid, FolderKanban, Handshake } from "lucide-react";
+import { useAuth } from "../../auth/useAuth";
+import { X, SidebarOpen, SidebarClose, Settings, LayoutGrid, FolderKanban, Handshake, LogOut } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
 
@@ -15,6 +15,7 @@ type SidebarPropType = {
 
 export default function Sidebar({ showSidebar, setShowSidebar, onNavigate, onClose, variant }: SidebarPropType) {
   const toggleSidebar = () => setShowSidebar((prev) => !prev);
+  const { logoutUser } = useAuth();
 
   const base = `flex items-center gap-3 hover:bg-sidebar-active w-full border border-transparent  px-4 py-2 rounded-md transition-colors ${showSidebar ? "justify-start" : "justify-center"}`
   const active = "bg-sidebar-active border border-sidebar-active-border text-primary"
@@ -74,6 +75,15 @@ export default function Sidebar({ showSidebar, setShowSidebar, onNavigate, onClo
 
 
         <div className="mt-auto pt-2">
+          <button
+            type="button"
+            onClick={logoutUser}
+            className={`${base} ${inactive} cursor-pointer`}>
+            <LogOut size={18} className="shrink-0" />
+            <span className={showSidebar ? "block" : "hidden"}>
+              Logout
+            </span>
+          </button>
           <NavLink to={"/settings"} onClick={onNavigate}
             className={({ isActive }) =>
               `${base} ${isActive ? active : inactive}`}
