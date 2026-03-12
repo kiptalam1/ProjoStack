@@ -105,7 +105,32 @@ export async function updateTask({
   }
 }
 
-type AllTasksTypes = {};
+type AllTasksTypes = {
+  id: string;
+  title: string;
+  status: "PENDING" | "COMPLETE";
+
+  createdAt: string;
+
+  createdById: string;
+  projectId: string;
+  workspaceId: string;
+
+  createdBy: {
+    id: string;
+    username: string;
+  };
+
+  project: {
+    id: string;
+    name: string;
+  };
+
+  workspace: {
+    id: string;
+    name: string;
+  };
+};
 export async function getAllTasks(): Promise<AllTasksTypes[]> {
   try {
     const res = await api.get("/tasks/all");
