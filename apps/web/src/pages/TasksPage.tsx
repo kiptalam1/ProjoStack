@@ -31,7 +31,7 @@ export default function TasksPage() {
                 <tr>
                   <th className="text-start p-2 font-medium">Title</th>
                   <th className="text-start p-2 font-medium">Project</th>
-                  <th className="text-start p-2 font-medium">Workspace</th>
+                  <th className="text-start p-2 font-medium hidden sm:table-cell">Workspace</th>
                   <th className="text-start p-2 font-medium">Status</th>
                   <th className="text-start p-2 font-medium hidden sm:table-cell">Created By</th>
                   <th className="text-start p-2 font-medium hidden sm:table-cell">Created At</th>
@@ -43,8 +43,8 @@ export default function TasksPage() {
                   <tr key={t.id} className="border-b border-border hover:bg-muted/20">
                     <td className="p-2">{t.title}</td>
                     <td className="p-2">{t.project.name}</td>
-                    <td className="p-2">{t.workspace.name}</td>
-                    <td className="p-2">{t.status}</td>
+                    <td className="p-2 hidden sm:table-cell">{t.workspace.name}</td>
+                    <td className="p-2 font-semibold text-sm">{t.status}</td>
                     <td className="p-2 hidden sm:table-cell">{t.createdBy.username}</td>
                     <td className="p-2 hidden sm:table-cell">
                       {new Date(t.createdAt).toLocaleString()}
