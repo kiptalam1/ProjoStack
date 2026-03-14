@@ -7,6 +7,7 @@ import CreateProjectModal from "../components/modals/CreateProjectModal";
 import ConfirmModal from "../components/modals/ConfirmModal";
 import useDeleteProject from "../features/projects/hooks/useDeleteProject";
 import UpdateProjectModal from "../components/modals/UpdateProjectModal";
+import InviteMembersModal from "../components/modals/InviteMembersModal";
 
 export default function WorkspaceProjectsPage() {
   const { loading, user } = useAuth();
@@ -17,6 +18,7 @@ export default function WorkspaceProjectsPage() {
   const { isPending: isDeleting, mutate: deleteProject } = useDeleteProject();
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [openInviteModal, setOpenInviteModal] = useState(false);
 
   const formatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -55,15 +57,26 @@ export default function WorkspaceProjectsPage() {
     <div className="w-full h-full space-y-4">
       <div className="space-y-5">
         <h1 className="text-2xl font-bold">Projects</h1>
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">
-          Create Project
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            className="bg-primary rounded-xl px-3 py-1 cursor-pointer text-sm text-white hover:opacity-80 transition-all duration-150">
+            Create Project
+          </button>
 
+          <button
+            type="button"
+            onClick={() => setOpenInviteModal(true)}
+            className="text-sm border border-border rounded-xl px-3 py-1 bg-inherit cursor-pointer hover:opacity-60 transition-opacity duration-150">
+            Invite members
+          </button>
+        </div>
         <Activity mode={isOpen ? "visible" : "hidden"}>
           <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
+        </Activity>
+        <Activity mode={openInviteModal ? "visible" : "hidden"}>
+          <InviteMembersModal open={openInviteModal} setOpen={setOpenInviteModal} />
         </Activity>
         {
           data.length === 0 && (
