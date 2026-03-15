@@ -16,22 +16,25 @@ model User {
   refreshToken String?
   createdAt    DateTime @default(now()) @db.Timestamptz(6)
 
-  createdWorkSpaces Workspace[]       @relation("WorkspaceCreator")
-  memberships       WorkspaceMember[]
-  invitationSent    WorkspaceMember[] @relation("WorkspaceInvitedBy")
-  projects          Project[]
-  tasks             Task[]            @relation("TaskCreator")
+  createdWorkSpaces        Workspace[]       @relation("WorkspaceCreator")
+  memberships              WorkspaceMember[]
+  invitationSent           WorkspaceMember[] @relation("WorkspaceInvitedBy")
+  projects                 Project[]
+  tasks                    Task[]            @relation("TaskCreator")
+  workspaceInvitesSent     WorkspaceInvite[] @relation("InviteCreator")
+  workspaceInvitesReceived WorkspaceInvite[] @relation("InviteRecepient")
 }
 
 model Workspace {
-  id        String            @id @default(uuid())
-  name      String
-  creator   User              @relation("WorkspaceCreator", fields: [creatorId], references: [id])
-  creatorId String
-  createdAt DateTime          @default(now()) @db.Timestamptz(6)
-  members   WorkspaceMember[]
-  projects  Project[]
-  tasks     Task[]
+  id               String            @id @default(uuid())
+  name             String
+  creator          User              @relation("WorkspaceCreator", fields: [creatorId], references: [id])
+  creatorId        String
+  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
+  members          WorkspaceMember[]
+  projects         Project[]
+  tasks            Task[]
+  workspaceInvites WorkspaceInvite[]
 }
 
 model WorkspaceMember {
@@ -78,6 +81,20 @@ model Task {
   createdAt   DateTime   @default(now())
 }
 
+model WorkspaceInvite {
+  id          String       @id @default(uuid())
+  sentById    String
+  sentBy      User         @relation("InviteCreator", fields: [sentById], references: [id])
+  sentToId    String
+  sentTo      User         @relation("InviteRecepient", fields: [sentToId], references: [id])
+  workspaceId String
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id])
+  status      InviteStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+
+  @@unique([workspaceId, sentToId])
+}
+
 enum Role {
   ADMIN
   USER
@@ -100,4 +117,10 @@ enum TaskStatus {
   COMPLETE
   STARTED
   PENDING
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINE
 }
