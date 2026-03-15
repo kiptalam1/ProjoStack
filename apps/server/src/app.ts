@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes.js";
 import workspaceRoutes from "./routes/workspace.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import taskRoutes from "./routes/task.routes.js";
+import inviteRoutes from "./routes/invite.routes.js";
 
 // limiter
 import { apiLimiter } from "./middlewares/rateLimit.middlewares.js";
@@ -36,6 +37,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/workspaces", apiLimiter, workspaceRoutes);
 app.use("/api/projects", apiLimiter, projectRoutes);
 app.use("/api/tasks", apiLimiter, taskRoutes);
+app.use("/api/invites", apiLimiter, inviteRoutes);
 //
 
 export default app;

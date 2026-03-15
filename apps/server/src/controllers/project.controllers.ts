@@ -3,54 +3,57 @@ import * as z from "zod";
 import { ProjectSchema } from "@projo/contracts";
 import { prisma } from "../lib/prisma.js";
 
+
 // GET all user projects;
 export async function getAllUserProjects(
-  req: Request,
-  res: Response,
+	req: Request,
+	res: Response,
 ): Promise<Response> {
-  try {
-    const user = req.user;
-    if (!user?.id) {
-      return res.status(401).json({ error: "Unauthorized!" });
-    }
+	try {
+		const user = req.user;
+		if (!user?.id) {
+			return res.status(401).json({ error: "Unauthorized!" });
+		}
 
-    const projects = await prisma.project.findMany({
-      where: {
-        workspace: {
-          members: {
-            some: {
-              userId: user.id,
-            },
-          },
-        },
-      },
-      include: {
-        workspace: {
-          select: {
-            id:true,
-          name:true
-        }
-        },
-        createdBy: {
-          select: {
-            username: true,
-            role: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return res.status(200).json({
-      data: projects,
-    });
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error);
-    console.error(msg);
-    return res.status(500).json({ error: "Something went wrong." });
-  }
+		const projects = await prisma.project.findMany({
+			where: {
+				workspace: {
+					members: {
+						some: {
+							userId: user.id,
+						},
+					},
+				},
+			},
+			include: {
+				workspace: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+				createdBy: {
+					select: {
+						username: true,
+						role: true,
+					},
+				},
+			},
+			orderBy: {
+				createdAt: "desc",
+			},
+		});
+		return res.status(200).json({
+			data: projects,
+		});
+	} catch (error: unknown) {
+		const msg = error instanceof Error ? error.message : String(error);
+		console.error(msg);
+		return res.status(500).json({ error: "Something went wrong." });
+	}
 }
+
+
 
 // UPDATE project in workspace;
 const UpdateProjectSchema = ProjectSchema.pick({ name: true });
