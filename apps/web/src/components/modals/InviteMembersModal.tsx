@@ -37,7 +37,8 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
       .map(e => e.trim())
       .filter(Boolean);
 
-    const validEmails = candidates.filter(email => emailRegex.test(email));
+    const validEmails = candidates
+      .filter(email => emailRegex.test(email));
 
     setEmails((prev) => {
       const remaining = MAX_INVITES - prev.length;
@@ -64,7 +65,7 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
       className="fixed inset-0 bg-black/50 z-50 backdrop-blur-md flex items-center justify-center w-full h-full p-4">
       <form
         onClick={(e) => e.stopPropagation()}
-        className="w-full sm:max-w-sm md:max-w-md lg:max-w-lg flex flex-col gap-2 p-4 bg-card rounded-xl">
+        className="w-full sm:max-w-sm md:max-w-md lg:max-w-lg flex flex-col gap-2 p-4 bg-card rounded-xl shadow-[0_-6px_12px_-6px_rgba(255,255,255,0.25)]">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Invite members</h2>
           <button
@@ -77,11 +78,13 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
         <div className="flex flex-wrap gap-2 p-2 max-h-60 overflow-y-auto ">
           {
             emails.map((email) => (
-              <span className="text-xs sm:text-sm font-jetbrains flex items-center gap-1 rounded-2xl px-2 py-0.5 bg-gray-200 max-w-full">
+              <span
+                key={email}
+                className="text-xs sm:text-sm font-jetbrains flex items-center gap-1 rounded-2xl px-2 py-0.5 bg-gray-200 max-w-full">
                 <span className="truncate wrap-break-word max-w-35 sm:max-w-50">{email}</span>
                 <button
                   type="button"
-                  className="shrink-0"
+                  className="shrink-0 cursor-pointer"
                   onClick={() => removeEmail(email)}>
                   <X size={16} />
                 </button>
@@ -97,7 +100,9 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Separate emails with commas or spaces..."
             className="flex-1 min-w-full w-full border-2 border-border my-1 rounded-lg outline-none focus:ring ring-primary p-2 text-sm placeholder:text-xs placeholder:font-jetbrains placeholder:italic placeholder:text-gray-500 font-light "></input>
-          <button className="bg-primary rounded-lg px-2 py-1 text-sm text-white w-full my-2 hover:opacity-80 cursor-pointer transition-opacity duration-150">Invite</button>
+          <button
+            disabled={emails.length === 0}
+            className="bg-primary rounded-lg px-2 py-1 text-sm text-white w-full my-2 hover:opacity-80 cursor-pointer transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed">Invite</button>
         </div>
       </form>
     </div>
