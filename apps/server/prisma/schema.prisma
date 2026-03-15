@@ -16,13 +16,12 @@ model User {
   refreshToken String?
   createdAt    DateTime @default(now()) @db.Timestamptz(6)
 
-  createdWorkSpaces        Workspace[]       @relation("WorkspaceCreator")
-  memberships              WorkspaceMember[]
-  invitationSent           WorkspaceMember[] @relation("WorkspaceInvitedBy")
-  projects                 Project[]
-  tasks                    Task[]            @relation("TaskCreator")
-  workspaceInvitesSent     WorkspaceInvite[] @relation("InviteCreator")
-  workspaceInvitesReceived WorkspaceInvite[] @relation("InviteRecepient")
+  createdWorkSpaces    Workspace[]       @relation("WorkspaceCreator")
+  memberships          WorkspaceMember[]
+  invitationSent       WorkspaceMember[] @relation("WorkspaceInvitedBy")
+  projects             Project[]
+  tasks                Task[]            @relation("TaskCreator")
+  workspaceInvitesSent WorkspaceInvite[] @relation("InviteCreator")
 }
 
 model Workspace {
@@ -83,16 +82,17 @@ model Task {
 
 model WorkspaceInvite {
   id          String       @id @default(uuid())
+  email       String
+  token       String       @unique @default(uuid())
   sentById    String
   sentBy      User         @relation("InviteCreator", fields: [sentById], references: [id])
-  sentToId    String
-  sentTo      User         @relation("InviteRecepient", fields: [sentToId], references: [id])
   workspaceId String
   workspace   Workspace    @relation(fields: [workspaceId], references: [id])
   status      InviteStatus @default(PENDING)
   createdAt   DateTime     @default(now())
+  expiresAt   DateTime?
 
-  @@unique([workspaceId, sentToId])
+  @@unique([workspaceId, email])
 }
 
 enum Role {
@@ -122,5 +122,5 @@ enum TaskStatus {
 enum InviteStatus {
   PENDING
   ACCEPTED
-  DECLINE
+  DECLINED
 }
