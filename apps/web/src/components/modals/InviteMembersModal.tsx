@@ -1,4 +1,4 @@
-import { SignalZero, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useState, type Dispatch, type KeyboardEvent, type SetStateAction } from "react";
 
 type ModalProps = {
@@ -12,13 +12,15 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter" || event.key === "," || event.key === " ") {
       event.preventDefault();
-      const value = input.trim();
-
+      const value = input.trim().toLowerCase();
       if (!value) return;
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      const isvalid = new RegExp()
-      setEmails(prev => [...prev, value]);
+      if (!(emailRegex.test(value))) return;
+      setEmails(prev => {
+        if (prev.includes(value)) return prev;
+        return [...prev, value]
+      });
       setInput("")
     }
   }
