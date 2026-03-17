@@ -78,67 +78,71 @@ export default function ProjectTasksPage() {
           const createdDate =
             t.createdAt ? formatter.format(new Date(t.createdAt)) : null;
           return (
-            <div
-              key={t.id}
-              className="p-4 bg-card shadow-md shadow-gray-200 rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
-              <Link
-                to={`project/${t.id}/tasks`}
-              >
-                <div className="flex flex-col gap-3 items-start justify-between flex-wrap ">
-                  <div className="w-full flex items-start justify-between gap-3">
-                    <h3 className="text-base font-semibold  overflow-hidden whitespace-nowrap text-ellipsis">
-                      {t.title}
-                    </h3>
-                    <p
-                      className={`text-xs ${t.status === "COMPLETE" ? "text-success" : ""}  ${t.status === "PENDING" ? "text-yellow-500" : ""} ${t.status === "STARTED" ? "text-blue-500" : ""}`}>
-                      {t.status ?? "-"}
-                    </p>
-                  </div>
+						<div
+							key={t.id}
+							className="p-4 bg-card shadow-md shadow-gray-200 rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
+							<Link to={`project/${t.id}/tasks`}>
+								<div className="flex flex-col gap-3 items-start justify-between flex-wrap ">
+									<div className="w-full flex items-start justify-between gap-3">
+										<h3 className="text-base font-semibold  overflow-hidden whitespace-nowrap text-ellipsis">
+											{t.title}
+										</h3>
+										<p
+											className={`text-xs ${t.status === "COMPLETE" ? "text-success" : ""}  ${t.status === "PENDING" ? "text-yellow-500" : ""} ${t.status === "STARTED" ? "text-blue-500" : ""}`}>
+											{t.status ?? "-"}
+										</p>
+									</div>
 
-                  <p className="text-xs overflow-hidden whitespace-nowrap text-ellipsis">
-                    Created by:{" "}
-                    <span className="text-base">{t.createdBy.username}</span>
-                  </p>
-                  <p className="text-xs font-jetbrains min-h-10">
-                    <span className="text-xs font-inter">Created: </span>
-                    {createdDate ?? "-"}
-                  </p>
-                </div>
-              </Link>
-              <ConfirmModal
-                open={showConfirmModal}
-                title="Delete Task!"
-                description="This action will permanently delete task and all related data."
-                loading={isDeleting}
-                onClose={() => setShowConfirmModal(false)}
-                onConfirm={() => handleDelete(t.projectId, t.id)}
-              />
+									<p className="text-xs overflow-hidden whitespace-nowrap text-ellipsis">
+										Created by:{" "}
+										<span className="text-base">{t.createdBy.username}</span>
+									</p>
+									<p className="text-xs font-jetbrains min-h-10">
+										<span className="text-xs font-inter">Created: </span>
+										{createdDate ?? "-"}
+									</p>
+								</div>
+							</Link>
+							<ConfirmModal
+								open={showConfirmModal}
+								title="Delete Task!"
+								description="This action will permanently delete task and all related data."
+								loading={isDeleting}
+								onClose={() => setShowConfirmModal(false)}
+								onConfirm={() => handleDelete(t.projectId, t.id)}
+							/>
 
-              <Activity mode={openUpdateModal ? "visible" : "hidden"}>
-                <UpdateTaskModal
-                  open={openUpdateModal}
-                  setOpenUpdate={setOpenUpdateModal}
-                  task={t}
-                />
-              </Activity>
+							<Activity mode={openUpdateModal ? "visible" : "hidden"}>
+								<UpdateTaskModal
+									open={openUpdateModal}
+									setOpenUpdate={setOpenUpdateModal}
+									task={t}
+								/>
+							</Activity>
 
-              <div className="flex items-center justify-between gap-3 w-full">{
-                t.createdById === user?.id && (
-                  <>  <button
-                    type="button"
-                    onClick={() => setShowConfirmModal(true)}
-                    className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer"><Trash size={16} /></button>
-                    <button
-                      type="button"
-                      onClick={() => setOpenUpdateModal(true)}
-                      className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer"><Edit size={16} /></button>
-                  </>
-                )
-              }
-              </div>
-
-            </div>
-          );
+							<div className="flex items-center justify-between gap-3 w-full">
+								{t.createdById === user?.id && (
+									<>
+										{" "}
+										<button
+											aria-label="delete project"
+											type="button"
+											onClick={() => setShowConfirmModal(true)}
+											className="text-gray-400 hover:text-red-500 transition-colors duration-150 cursor-pointer">
+											<Trash size={16} />
+										</button>
+										<button
+											type="button"
+											aria-label="update modal"
+											onClick={() => setOpenUpdateModal(true)}
+											className="text-gray-400 hover:text-blue-500 transition-colors duration-150 cursor-pointer">
+											<Edit size={16} />
+										</button>
+									</>
+								)}
+							</div>
+						</div>
+					);
         })}
       </div>
     </div>
