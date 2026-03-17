@@ -32,8 +32,23 @@ export async function getWorkspaceInvites(req: Request, res: Response): Promise<
 		const invites = await prisma.workspaceInvite.findMany({
 			where: {
 				email: existsUser?.email,
-			}
-		})
+			},
+			include: {
+				workspace: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+				sentBy: {
+					select: {
+						username: true,
+						email: true,
+						id: true,
+					},
+				},
+			},
+		});
 
 		return res.status(200).json({
 			data: invites
