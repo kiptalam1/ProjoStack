@@ -1,6 +1,51 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 
+// get workspace invites;
+export async function getWorkspaceInvites(req: Request, res: Response): Promise<Response>{
+	try {
+		const { user } = req;
+
+		if (!user?.id) {
+			return res.status(401).json({
+				error: "Unauthorized!"
+			});
+		}
+
+		const existsUser = await prisma.user.findUnique({
+			where: {
+				id: user.id,
+			},
+			omit: {
+				password: true,
+				refreshToken: true,				
+			}
+		});
+
+		if (!existsUser) {
+			return res.status(401).json({
+				error: "User not found!"
+			});
+		};
+
+
+		const invites = await prisma.workspaceInvite.findMany({
+			where: {
+				email: existsUser?.email,
+			}
+		})
+
+		return res.status(200).json({
+			data: invites
+		});
+
+	} catch (error: unknown) {
+		const msg = error instanceof Error ? error.message : String(error);
+		console.error(msg);
+		return res.status(500).json({ error: "Something went wrong." });
+	}
+}
+
 // send workspace invite;
 export async function sendWorkspaceInvite(
 	req: Request,
@@ -8,7 +53,7 @@ export async function sendWorkspaceInvite(
 ): Promise<Response> {
 	try {
 		const MAX_INVITES = 20;
-		const user = req.user;
+		const { user } = req;
 		const workspaceId = req.params.workspaceId as string;
 		const { emails } = req.body as { emails: string[] };
 
