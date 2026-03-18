@@ -17,3 +17,33 @@ export async function getWsInvites(): Promise<InviteTypes[]> {
 		throw new Error("Unexpected error occurred");
 	}
 }
+
+type ResponseTypes = {
+	message: string;
+	data: InviteTypes;
+};
+
+type InputTypes = {
+	workspaceId: string;
+	emails: string[];
+};
+export async function sendWsInvite({
+	workspaceId,
+	emails,
+}: InputTypes): Promise<ResponseTypes> {
+	try {
+		const res = await api.post(`/invites/workspace/${workspaceId}/invite`, {
+			emails,
+		});
+		return res.data;
+	} catch (error: unknown) {
+		if (error instanceof AxiosError) {
+			throw new Error(error.response?.data.error);
+		}
+
+		if (error instanceof Error) {
+			throw Error(error.message);
+		}
+		throw new Error("Unexpected error occurred");
+	}
+}
