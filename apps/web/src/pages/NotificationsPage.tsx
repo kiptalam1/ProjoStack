@@ -62,7 +62,7 @@ export default function NotificationsPage() {
 									{new Intl.DateTimeFormat("en-GB", {
 										dateStyle: "medium",
 										timeStyle: "short",
-									}).format(new Date(i.expiresAt))}
+									}).format(new Date(i.createdAt))}
 								</p>
 							</div>
 							<div className="flex items-center justify-between gap-2">

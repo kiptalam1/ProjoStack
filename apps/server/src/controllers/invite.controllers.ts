@@ -48,6 +48,9 @@ export async function getWorkspaceInvites(req: Request, res: Response): Promise<
 					},
 				},
 			},
+			orderBy: {
+				createdAt: "desc",
+			},
 		});
 
 		return res.status(200).json({
@@ -143,7 +146,7 @@ export async function sendWorkspaceInvite(
 
 		if (newEmails.length === 0) {
 			return res.status(409).json({
-				error: "All emails already invited!",
+				error: "Already invited!",
 			});
 		}
 

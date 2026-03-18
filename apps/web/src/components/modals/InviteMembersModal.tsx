@@ -74,8 +74,9 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
 			{ workspaceId, emails },
 			{
 				onSuccess: () => {
-					setOpen(false);
 					setInput("");
+					setEmails([]);
+					setOpen(false);
 				},
 			},
 		);
