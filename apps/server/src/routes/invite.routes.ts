@@ -1,5 +1,6 @@
 import express from "express";
 import {
+	acceptWsInvite,
 	getWorkspaceInvites,
 	sendWorkspaceInvite,
 } from "../controllers/invite.controllers.js";
@@ -13,6 +14,6 @@ router.post(
 	sendWorkspaceInvite,
 );
 router.get("/", isAuthenticated, getWorkspaceInvites);
-
+router.post("/:token/accept", isAuthenticated, acceptWsInvite);
 
 export default router;

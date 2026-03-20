@@ -1,14 +1,135 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 
+// accept ws invite;
+export async function acceptWsInvite(
+	req: Request,
+	res: Response,
+): Promise<Response> {
+	try {
+		const { user } = req;
+		const { token } = req.params;
+
+		// check if user is logged in;
+		if (!user?.id) {
+			return res.status(401).json({
+				error: "Unauthorized!",
+			});
+		}
+		// check if invite token is present;
+		if (!token) {
+			return res.status(400).json({
+				error: "Token required!",
+			});
+		}
+
+		// check if invite with provided token is present;
+		const invite = await prisma.workspaceInvite.findUnique({
+			where: {
+				token: String(token),
+			},
+		});
+		if (!invite) {
+			return res.status(404).json({
+				error: "Invalid invite!",
+			});
+		}
+
+		// check if logged in user exists in db;
+		const dbUser = await prisma.user.findUnique({
+			where: {
+				id: user.id,
+			},
+			select: {
+				email: true,
+			},
+		});
+		if (!dbUser) {
+			return res.status(404).json({
+				error: "User not found!",
+			});
+		}
+
+		// check if invite belongs to user;
+		if (dbUser.email !== invite.email) {
+			return res.status(403).json({
+				error: "Unauthorized!",
+			});
+		}
+
+		// ensure invite is not expired and is pending;
+		if (invite.expiresAt && invite.expiresAt < new Date()) {
+			return res.status(400).json({
+				error: "Invite has expired!",
+			});
+		}
+
+		if (invite.status !== "PENDING") {
+			return res.status(400).json({
+				error: "Invite is already settled.",
+			});
+		}
+
+		// check if user is already ws member;
+		const existingMember = await prisma.workspaceMember.findUnique({
+			where: {
+				userId_workspaceId: {
+					userId: user.id,
+					workspaceId: invite.workspaceId,
+				},
+			},
+		});
+		if (existingMember) {
+			return res.status(400).json({
+				error: "You are already a member.",
+			});
+		}
+
+		// create membership;
+		const membership = await prisma.$transaction(async (tx) => {
+      await tx.workspaceMember.create({
+        data: {
+          userId: user.id,
+          workspaceId: invite.workspaceId,
+          status: "ACTIVE",
+          memberRole: "MEMBER",
+          invitedById: invite.sentById,
+        },
+      });
+
+      await tx.workspaceInvite.update({
+        where: {
+          id: invite.id,
+        },
+        data: {
+          status: "ACCEPTED",
+        },
+      });
+
+		});
+
+		return res.status(200).json({
+			message: "Invite accepted",
+			data: membership,
+		});
+	} catch (error: unknown) {
+		const msg = error instanceof Error ? error.message : String(error);
+		console.error(msg);
+		return res.status(500).json({ error: "Something went wrong." });
+	}
+}
+
 // get workspace invites;
-export async function getWorkspaceInvites(req: Request, res: Response): Promise<Response>{
+export async function getWorkspaceInvites(
+	req: Request,
+	res: Response,
+): Promise<Response> {
 	try {
 		const { user } = req;
 
 		if (!user?.id) {
 			return res.status(401).json({
-				error: "Unauthorized!"
+				error: "Unauthorized!",
 			});
 		}
 
@@ -18,16 +139,15 @@ export async function getWorkspaceInvites(req: Request, res: Response): Promise<
 			},
 			omit: {
 				password: true,
-				refreshToken: true,				
-			}
+				refreshToken: true,
+			},
 		});
 
 		if (!existsUser) {
 			return res.status(401).json({
-				error: "User not found!"
+				error: "User not found!",
 			});
-		};
-
+		}
 
 		const invites = await prisma.workspaceInvite.findMany({
 			where: {
@@ -54,9 +174,8 @@ export async function getWorkspaceInvites(req: Request, res: Response): Promise<
 		});
 
 		return res.status(200).json({
-			data: invites
+			data: invites,
 		});
-
 	} catch (error: unknown) {
 		const msg = error instanceof Error ? error.message : String(error);
 		console.error(msg);
