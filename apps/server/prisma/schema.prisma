@@ -87,10 +87,10 @@ model WorkspaceInvite {
   sentById    String
   sentBy      User         @relation("InviteCreator", fields: [sentById], references: [id])
   workspaceId String
-  workspace   Workspace    @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   status      InviteStatus @default(PENDING)
   createdAt   DateTime     @default(now())
-  expiresAt   DateTime?
+  expiresAt   DateTime
 
   @@unique([workspaceId, email])
 }

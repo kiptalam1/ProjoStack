@@ -35,11 +35,11 @@ export default function NotificationsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-5">
         {invites &&
           invites.length > 0 &&
-          invites.filter((i) => i.status === "PENDING" && new Date(i.expiresAt) > new Date())
+          invites.filter((i) => i.status === "PENDING"
+            && new Date(i.expiresAt) > new Date())
             .map((i) => (
-              (
-                <WsInviteCard key={i.id} i={i} />
-              ))
+              <WsInviteCard key={i.id} i={i} />
+            )
             )}
       </div>
     </div>
