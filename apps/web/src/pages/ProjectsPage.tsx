@@ -1,8 +1,10 @@
 import useGetAllProjects from "../features/projects/hooks/useGetAllProjects"
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import { useNavigate } from "react-router";
 
 export default function ProjectsPage() {
   const { data, error, isError, isPending } = useGetAllProjects();
+  const navigate = useNavigate();
 
 
   if (isError) {
@@ -40,7 +42,9 @@ export default function ProjectsPage() {
 
               <tbody>
                 {data.map((p) => (
-                  <tr key={p.id} className="border-b border-border hover:bg-muted/20">
+                  <tr key={p.id}
+                    onClick={() => navigate(`/workspaces/${p.workspaceId}/projects/${p.id}/tasks`)}
+                    className="border-b border-border hover:bg-muted/20">
                     <td className="p-2">{p.name}</td>
                     <td className="p-2">{p.workspace.name}</td>
                     <td className="p-2 hidden sm:table-cell">{p.createdBy.role.toLowerCase()}</td>
