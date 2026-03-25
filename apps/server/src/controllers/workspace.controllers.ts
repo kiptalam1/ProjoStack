@@ -138,7 +138,11 @@ export async function getUserWorkspaces(
     if (user.role !== "ADMIN") {
       workspaces = await prisma.workspace.findMany({
         where: {
-          creatorId: user.id,
+          members: {
+            some: {
+              userId: user.id
+            },
+          },
         },
         include: {
           members: true,
