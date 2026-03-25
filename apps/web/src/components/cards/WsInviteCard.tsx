@@ -1,10 +1,11 @@
 import type { InviteTypes } from "../../features/invites/api/invites.types";
 import { useAcceptWsInvite } from "../../features/invites/hooks/useAcceptWsInvite";
+import { useDeclineWsInvite } from "../../features/invites/hooks/useDeclineWsInvite";
 
 export default function WsInviteCard({ i }: { i: InviteTypes }) {
 
   const { mutate: acceptInvite, isPending: isAccepting } = useAcceptWsInvite();
-
+  const { mutate: rejectInvite, isPending: isRejecting } = useDeclineWsInvite();
 
 
   const statusStyles = {
@@ -13,9 +14,17 @@ export default function WsInviteCard({ i }: { i: InviteTypes }) {
     DECLINED: "text-red-500",
   };
 
+  // accept ws-invite;
   function handleAcceptInvite(token: string) {
     acceptInvite(token)
   }
+
+  // reject ws-invite;
+  function handleDeclineInvite(token: string) {
+    rejectInvite(token);
+  }
+
+
 
 
   return (
@@ -52,8 +61,9 @@ export default function WsInviteCard({ i }: { i: InviteTypes }) {
       <div className="ml-auto space-x-5 mt-4">
         <button
           type="button"
+          onClick={() => handleDeclineInvite(i.token)}
           className="bg-inherit border border-border rounded-lg px-2 py-1 text-sm font-light cursor-pointer hover:opacity-60 transition-opacity duration-150">
-          Decline
+          {isRejecting ? "Declining..." : "Decline"}
         </button>
         <button
           type="button"
