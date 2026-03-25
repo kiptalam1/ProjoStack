@@ -67,3 +67,20 @@ export async function acceptWsInvite(
   }
 }
 
+// reject invite;
+export async function rejectWsInvite(
+  token: string,
+): Promise<{ message: string }> {
+  try {
+    const res = await api.post(`/invites/${token}/decline`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(error.response?.data.error);
+    }
+    if (error instanceof Error) {
+      throw Error(error.message);
+    }
+    throw new Error("Unexpected error occurred");
+  }
+}
