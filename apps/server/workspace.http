@@ -109,3 +109,9 @@ Content-Type: application/json
 # @attach-cookie-jar
 # @jq . 
 GET http://localhost:5000/api/tasks/all
+
+
+### 
+# @attach-cookie-jar
+# @jq . 
+POST http://localhost:5000/api/invites/d15ad602-94e0-49ce-accd-a5d45c2c1b72/decline
