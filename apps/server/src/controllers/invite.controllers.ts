@@ -150,32 +150,28 @@ export async function acceptWsInvite(
       });
     }
 
-    // check if user is already ws member;
-    const existingMember = await prisma.workspaceMember.findUnique({
-      where: {
-        userId_workspaceId: {
-          userId: user.id,
-          workspaceId: invite.workspaceId,
-        },
-      },
-    });
-    if (existingMember) {
-      return res.status(400).json({
-        error: "You are already a member.",
-      });
-    }
-
     // create membership;
     const membership = await prisma.$transaction(async (tx) => {
-      await tx.workspaceMember.create({
-        data: {
-          userId: user.id,
-          workspaceId: invite.workspaceId,
-          status: "ACTIVE",
-          memberRole: "MEMBER",
-          invitedById: invite.sentById,
+      // check if user is already ws member;
+      const existingMember = await tx.workspaceMember.findUnique({
+        where: {
+          userId_workspaceId: {
+            userId: user.id,
+            workspaceId: invite.workspaceId,
+          },
         },
       });
+      if (!existingMember) {
+        await tx.workspaceMember.create({
+          data: {
+            userId: user.id,
+            workspaceId: invite.workspaceId,
+            status: "ACTIVE",
+            memberRole: "MEMBER",
+            invitedById: invite.sentById,
+          },
+        });
+      }
 
       await tx.workspaceInvite.update({
         where: {
@@ -230,7 +226,9 @@ export async function getWorkspaceInvites(
 
     const invites = await prisma.workspaceInvite.findMany({
       where: {
-        email: existsUser?.email,
+        email: existsUser.email,
+        status: "PENDING",
+        expiresAt: { gt: new Date() },
       },
       include: {
         workspace: {
@@ -336,6 +334,8 @@ export async function sendWorkspaceInvite(
       where: {
         workspaceId,
         email: { in: validEmails },
+        status: "PENDING",
+        expiresAt: { gt: new Date() },
       },
       select: { email: true },
     });
@@ -351,12 +351,24 @@ export async function sendWorkspaceInvite(
     // send invites;
     const invites = await prisma.$transaction(
       newEmails.map((email) =>
-        prisma.workspaceInvite.create({
-          data: {
+        prisma.workspaceInvite.upsert({
+          where: {
+            workspaceId_email: {
+              workspaceId,
+              email,
+            },
+          },
+          create: {
             workspaceId,
             sentById: user.id,
             email,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            status: "PENDING",
+          },
+          update: {
+            status: "PENDING",
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            sentById: user.id,
           },
         }),
       ),
