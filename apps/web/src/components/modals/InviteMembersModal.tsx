@@ -112,7 +112,7 @@ export default function InviteMembersModal({ open, setOpen }: ModalProps) {
 					{emails.map((email) => (
 						<span
 							key={email}
-							className="text-xs sm:text-sm font-jetbrains flex items-center gap-1 rounded-2xl px-2 py-0.5 bg-gray-200 max-w-full">
+							className="text-xs sm:text-sm font-jetbrains flex items-center gap-1 rounded-2xl px-2 py-0.5 bg-bg max-w-full">
 							<span className="truncate wrap-break-word max-w-35 sm:max-w-50">
 								{email}
 							</span>

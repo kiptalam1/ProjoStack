@@ -84,7 +84,7 @@ export default function WorkspacesPage() {
           return (
 						<div
 							key={w.id}
-							className="p-4 bg-card shadow-md shadow-gray-200 rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
+							className="p-4 bg-card rounded-2xl border-2 border-transparent hover:border-2 hover:border-border transition-colors duration-150">
 							<Link to={`${w.id}/projects`}>
 								<div className="flex flex-col gap-3 items-start justify-between flex-wrap ">
 									<div className="w-full flex items-start justify-between gap-3">
