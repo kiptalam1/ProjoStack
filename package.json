@@ -8,6 +8,6 @@
 		"prisma:generate": "prisma generate --schema=apps/server/prisma/schema.prisma",
 		"prisma:migrate:dev": "prisma migrate dev --schema=apps/server/prisma/schema.prisma",
 		"prisma:migrate:deploy": "prisma migrate deploy --schema=apps/server/prisma/schema.prisma",
-		"build": "npm run build -w @projo/contracts && npm run build -w server"
+		"build": "npm run build -w @projo/contracts && npm run build -w web && npm run build -w server"
 	}
 }
