@@ -1,12 +1,12 @@
 import axios from "axios";
 
-// const VITE_API_URL = import.meta.env.VITE_API_URL as string;
+const VITE_API_URL = import.meta.env.VITE_API_URL as string;
 
 const api = axios.create({
-  baseURL: "/api",
-  withCredentials: true,
-  timeout: 60000,
-  timeoutErrorMessage: "Request took too long. Please try again.",
+	baseURL: `${VITE_API_URL}/api`,
+	withCredentials: true,
+	timeout: 60000,
+	timeoutErrorMessage: "Request took too long. Please try again.",
 });
 
 api.interceptors.response.use(
