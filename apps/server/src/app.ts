@@ -46,7 +46,7 @@ const __dirname = path.dirname(__filename);
 // serve frontend;
 app.use(express.static(path.join(__dirname, "../../web/dist")));
 // SPA fallback;
-app.get("/*", (_req, res) => {
+app.use((_req, res) => {
 	res.sendFile(path.join(__dirname, "../../web/dist/index.html"));
 });
 export default app;
