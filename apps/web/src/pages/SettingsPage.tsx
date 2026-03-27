@@ -8,7 +8,7 @@ export default function SettingsPage() {
 	const { user } = useAuth();
 	const [theme, setTheme] = useState<Theme>(() => {
 		const saved = localStorage.getItem("theme") as Theme | null;
-		if (saved) return saved;
+		if (saved === "dark" || saved === "light") return saved;
 		const systemDark = window.matchMedia(
 			"(prefers-color-scheme: dark)",
 		).matches;

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    
     <meta charset="UTF-8" />
     <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon-light.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +12,13 @@
       rel="stylesheet"
     />
     <title>ProjoStack</title>
+    <script id="theme-init">
+      const saved = localStorage.getItem("theme");
+      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      const theme = saved === "light" || saved === "dark" ? saved : systemDark ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", theme === "dark");
+    </script>
   </head>
   <body>
     <div id="root"></div>
