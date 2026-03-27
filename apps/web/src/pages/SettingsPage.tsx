@@ -15,9 +15,25 @@ export default function SettingsPage() {
 		return systemDark ? "dark" : "light";
 	});
 
+	function setFavicon(theme: Theme) {
+		const favicon = document.getElementById(
+			"favicon",
+		) as HTMLLinkElement | null;
+
+		if (!favicon) return;
+
+		const newHref =
+			theme === "dark" ? "/favicon-dark.svg" : "/favicon-light.svg";
+
+		if (favicon.href !== newHref) {
+			favicon.href = newHref;
+		}
+	}
+
 	useEffect(() => {
 		localStorage.setItem("theme", theme);
 		document.documentElement.classList.toggle("dark", theme === "dark");
+		setFavicon(theme);
 	}, [theme]);
 
 	function changeTheme() {
