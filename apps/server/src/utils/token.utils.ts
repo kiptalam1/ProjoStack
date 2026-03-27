@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import { Role } from "@prisma/client";
+// import { Role } from "@prisma/client";
+import { type Role } from "@projo/contracts";
 import type { Response } from "express";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
