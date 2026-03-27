@@ -219,17 +219,17 @@ export async function logoutUser(
     }
   }
   res.clearCookie("accessToken", {
-    secure: isProd,
-    sameSite: "strict",
-    httpOnly: true,
-    path: "/",
-  });
+		secure: isProd,
+		sameSite: "none",
+		httpOnly: true,
+		path: "/",
+	});
   res.clearCookie("refreshToken", {
-    secure: isProd,
-    sameSite: "strict",
-    httpOnly: true,
-    path: "/api/auth",
-  });
+		secure: isProd,
+		sameSite: "none",
+		httpOnly: true,
+		path: "/api/auth",
+	});
   return res.status(200).json({ message: "Logged out successfully." });
 }
 

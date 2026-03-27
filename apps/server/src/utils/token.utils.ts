@@ -38,7 +38,7 @@ export function attachCookie(
 ) {
   res.cookie(key, value, {
 		secure: isProd,
-		sameSite: "strict",
+		sameSite: "none",
 		httpOnly: true,
 		path: options?.path ?? "/",
 		maxAge: options?.maxAgeMs ?? 15 * 60 * 1000,
