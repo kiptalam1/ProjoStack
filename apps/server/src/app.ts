@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -39,5 +40,8 @@ app.use("/api/projects", apiLimiter, projectRoutes);
 app.use("/api/tasks", apiLimiter, taskRoutes);
 app.use("/api/invites", apiLimiter, inviteRoutes);
 //
-
+app.use(express.static(path.join(__dirname, "../../web/dist")));
+app.get("*", (_req, res) => {
+	res.sendFile(path.join(__dirname, "../../web/dist/index.html"));
+});
 export default app;
