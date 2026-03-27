@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { WorkspaceSchema, type WorkspaceData } from "@projo/contracts";
 import * as z from "zod";
+import type { Prisma } from "@prisma/client";
 
 
 
@@ -190,19 +191,21 @@ export async function createWorkspace(
       return res.status(409).json({ error: "This name is in use." });
     }
     // create the workspace;
-    const newWorkspace = await prisma.$transaction(async (tx) => {
-      const ws = await tx.workspace.create({
-        data: { name: name, creatorId: req.user!.id },
-      });
-      await tx.workspaceMember.create({
-        data: {
-          userId: ws.creatorId,
-          workspaceId: ws.id,
-          memberRole: "OWNER",
-        },
-      });
-      return ws;
-    });
+    const newWorkspace = await prisma.$transaction(
+			async (tx: Prisma.TransactionClient) => {
+				const ws = await tx.workspace.create({
+					data: { name: name, creatorId: req.user!.id },
+				});
+				await tx.workspaceMember.create({
+					data: {
+						userId: ws.creatorId,
+						workspaceId: ws.id,
+						memberRole: "OWNER",
+					},
+				});
+				return ws;
+			},
+		);
 
     return res
       .status(201)

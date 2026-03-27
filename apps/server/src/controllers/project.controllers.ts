@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as z from "zod";
 import { ProjectSchema } from "@projo/contracts";
 import { prisma } from "../lib/prisma.js";
+import type { $Enums } from "@prisma/client";
 
 
 // GET all user projects;
@@ -252,7 +253,13 @@ export async function getWorkspaceProjects(
       return res.status(404).json({ error: "Workspace does not exist!" });
     }
     // ensure user is a member of the workspace;
-    const isMember = existsWs.members.find((m) => m.userId === String(user.id));
+    type MemberType = {
+			userId: string;
+			status: $Enums.MembershipStatus;
+		};
+		const isMember = existsWs.members.find(
+			(m: MemberType) => m.userId === String(user.id),
+		);
     if (!isMember) {
       return res.status(403).json({ error: "You are not a member!" });
     }
@@ -326,8 +333,8 @@ export async function createProjectInWorkspace(
 
     // check if user is a member of workspace;
     const isMember = workspace?.members.find(
-      (m) => String(m.userId) === String(user?.id),
-    );
+			(m: { userId: string }) => String(m.userId) === String(user?.id),
+		);
     if (!isMember) {
       return res.status(401).json({ error: "You are not a member!" });
     }

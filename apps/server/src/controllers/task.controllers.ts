@@ -271,8 +271,8 @@ export async function getAllTasks(
       return res.status(404).json({ error: "Workspace not found." });
     }
     const isMember =
-      workspace.creatorId === user?.id ||
-      workspace.members.some((m) => m.userId === user?.id);
+			workspace.creatorId === user?.id ||
+			workspace.members.some((m: { userId: string }) => m.userId === user?.id);
     if (!isMember) {
       return res.status(403).json({ error: "You are not a member!" });
     }
@@ -362,8 +362,8 @@ export async function createTask(
       return res.status(404).json({ error: "Workspace not found." });
     }
     const isMember =
-      workspace.creatorId === user.id ||
-      workspace.members.some((m) => m.userId === user.id);
+			workspace.creatorId === user.id ||
+			workspace.members.some((m: { userId: string }) => m.userId === user.id);
     if (!isMember) {
       return res.status(403).json({ error: "You are not a member!" });
     }

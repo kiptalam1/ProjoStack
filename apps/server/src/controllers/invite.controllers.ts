@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
+import type { Prisma } from "@prisma/client";
 
 // decline ws-invite;
 export async function rejectWsInvite(
@@ -151,37 +152,39 @@ export async function acceptWsInvite(
     }
 
     // create membership;
-    const membership = await prisma.$transaction(async (tx) => {
-      // check if user is already ws member;
-      const existingMember = await tx.workspaceMember.findUnique({
-        where: {
-          userId_workspaceId: {
-            userId: user.id,
-            workspaceId: invite.workspaceId,
-          },
-        },
-      });
-      if (!existingMember) {
-        await tx.workspaceMember.create({
-          data: {
-            userId: user.id,
-            workspaceId: invite.workspaceId,
-            status: "ACTIVE",
-            memberRole: "MEMBER",
-            invitedById: invite.sentById,
-          },
-        });
-      }
+    const membership = await prisma.$transaction(
+			async (tx: Prisma.TransactionClient) => {
+				// check if user is already ws member;
+				const existingMember = await tx.workspaceMember.findUnique({
+					where: {
+						userId_workspaceId: {
+							userId: user.id,
+							workspaceId: invite.workspaceId,
+						},
+					},
+				});
+				if (!existingMember) {
+					await tx.workspaceMember.create({
+						data: {
+							userId: user.id,
+							workspaceId: invite.workspaceId,
+							status: "ACTIVE",
+							memberRole: "MEMBER",
+							invitedById: invite.sentById,
+						},
+					});
+				}
 
-      await tx.workspaceInvite.update({
-        where: {
-          id: invite.id,
-        },
-        data: {
-          status: "ACCEPTED",
-        },
-      });
-    });
+				await tx.workspaceInvite.update({
+					where: {
+						id: invite.id,
+					},
+					data: {
+						status: "ACCEPTED",
+					},
+				});
+			},
+		);
 
     return res.status(200).json({
       message: "Invite accepted",
@@ -339,7 +342,9 @@ export async function sendWorkspaceInvite(
       },
       select: { email: true },
     });
-    const existingSet = new Set(existingInvites.map((i) => i.email));
+    const existingSet = new Set(
+			existingInvites.map((i: { email: string }) => i.email),
+		);
     const newEmails = validEmails.filter((e) => !existingSet.has(e));
 
     if (newEmails.length === 0) {
