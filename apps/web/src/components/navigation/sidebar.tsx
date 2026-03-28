@@ -37,9 +37,10 @@ export default function Sidebar({ showSidebar, setShowSidebar, onNavigate, onClo
 
   return (
 		<>
-			<aside className="relative flex flex-col bg-sidebar text-sm text-sidebar-text h-screen overflow-y-auto p-4 md:p-6 border-r border-border">
+			<aside className="relative flex flex-col bg-sidebar text-sm text-sidebar-text min-h-dvh overflow-y-auto p-4 md:p-6 border-r border-border pb-[calc(env(safe-area-inset-bottom)+12px)]">
 				{variant === "desktop" && (
 					<button
+						type="button"
 						onClick={toggleSidebar}
 						aria-label={showSidebar ? "Collapse sidebar" : "Expand sidebar"}
 						className={`absolute right-2 top-2 px-3 py-2 text-sidebar-text hover:text-muted hover:bg-sidebar-active transition-all duration-100 cursor-pointer rounded-sm ${showSidebar ? "hover:cursor-w-resize" : "hover:cursor-e-resize"}`}>
