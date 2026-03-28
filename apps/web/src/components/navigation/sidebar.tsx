@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { useAuth } from "../../auth/useAuth";
 import {
 	X,
@@ -14,28 +14,32 @@ import {
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 
-
 type SidebarPropType = {
-  showSidebar: boolean;
-  setShowSidebar: Dispatch<SetStateAction<boolean>>
-  onNavigate?: () => void;
-  onClose?: () => void;
-  variant: "desktop" | "mobile"
-}
+	showSidebar: boolean;
+	setShowSidebar: Dispatch<SetStateAction<boolean>>;
+	onNavigate?: () => void;
+	onClose?: () => void;
+	variant: "desktop" | "mobile";
+};
 
+export default function Sidebar({
+	showSidebar,
+	setShowSidebar,
+	onNavigate,
+	onClose,
+	variant,
+}: SidebarPropType) {
+	const toggleSidebar = () => setShowSidebar((prev) => !prev);
+	const { logoutUser } = useAuth();
 
-export default function Sidebar({ showSidebar, setShowSidebar, onNavigate, onClose, variant }: SidebarPropType) {
-  const toggleSidebar = () => setShowSidebar((prev) => !prev);
-  const { logoutUser } = useAuth();
+	const base = `flex items-center gap-3 hover:bg-sidebar-active w-full border border-transparent  px-4 py-2 rounded-md transition-colors ${showSidebar ? "justify-start" : "justify-center"}`;
+	const active =
+		"bg-sidebar-active border border-sidebar-active-border text-primary";
+	const inactive = "hover:border-slate-700";
 
-  const base = `flex items-center gap-3 hover:bg-sidebar-active w-full border border-transparent  px-4 py-2 rounded-md transition-colors ${showSidebar ? "justify-start" : "justify-center"}`
-  const active = "bg-sidebar-active border border-sidebar-active-border text-primary"
-  const inactive = "hover:border-slate-700"
+	const navigate = useNavigate();
 
-
-
-
-  return (
+	return (
 		<>
 			<aside className="relative flex flex-col bg-sidebar text-sm text-sidebar-text min-h-dvh overflow-y-auto p-4 md:p-6 border-r border-border pb-[calc(env(safe-area-inset-bottom)+12px)]">
 				{variant === "desktop" && (
@@ -62,7 +66,8 @@ export default function Sidebar({ showSidebar, setShowSidebar, onNavigate, onClo
 
 				{/* Brand / spacer */}
 				<div
-					className={`flex items-center gap-2 mt-12  pl-2 py-2 text-muted ${showSidebar ? "justify-start" : "justify-center"}`}>
+					onClick={() => navigate("dashboard")}
+					className={`flex items-center gap-2 mt-12  pl-2 py-2 text-muted cursor-pointer ${showSidebar ? "justify-start" : "justify-center"}`}>
 					<Handshake size={30} className="shrink-0" />
 					<span
 						className={
