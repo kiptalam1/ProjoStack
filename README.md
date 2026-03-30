@@ -1,11 +1,9 @@
 # ProjoStack
 
-Multi-tenant SaaS backend with strict workspace isolation, role-based access control (RBAC), and audit logging.
+Multi-tenant web app with strict workspace isolation, role-based access control (RBAC), and audit logging.
 
 **Links**  
 - Live Demo: https://projostack.onrender.com  
-- API Docs: (add link)  
-- Database Schema: (add link or point to Prisma schema)
 
 ---
 
@@ -34,6 +32,7 @@ The system enforces **workspace isolation at the database level**, ensuring user
 ## Tech Stack
 
 ### Frontend
+```
 - React 18
 - TypeScript
 - React Router
@@ -42,8 +41,10 @@ The system enforces **workspace isolation at the database level**, ensuring user
 - shadcn/ui
 - Axios
 - Zod
+```
 
 ### Backend
+```
 - Node.js
 - Express
 - TypeScript
@@ -52,15 +53,19 @@ The system enforces **workspace isolation at the database level**, ensuring user
 - JWT (HTTP-only cookies)
 - bcrypt
 - Zod
-
+```
 ### Infrastructure
+```
 - Monorepo (apps/ + packages/contracts)
 - Render (deployment)
 - Neon (PostgreSQL)
+```
 
 ### Testing
+```
 - Jest
 - Supertest
+```
 
 ---
 
@@ -99,29 +104,45 @@ If a resource does not belong to the workspace context, the server returns `403 
 
 ## Project Structure
 
-
+```
 ProjoStack/
 ├── apps/
 │ ├── frontend/
 │ │ └── src/
-│ │ ├── components/
-│ │ ├── pages/
-│ │ ├── hooks/
-│ │ ├── services/
-│ │ └── types/
-│ └── backend/
+│ │ | ├── components/
+| | | ├──api/
+| | | ├──assets/
+| | | ├──auth/
+| | | ├──components/
+| | | ├──features/
+| | | ├──layouts/
+| | | ├──lib/
+| | | ├──App.tsx
+| | | ├──index.css
+| | | ├──main.tsx
+│ │ | ├── pages/
+│ │ | ├── hooks/
+│ │ | ├── services/
+│ │ | |── types/
+│ └── server/
+| |── tests/
+| |── prisma/
 │ ├── src/
 │ │ ├── controllers/
 │ │ ├── middlewares/
 │ │ ├── routes/
-│ │ ├── services/
 │ │ └── utils/
+| | ├── configs/
+| | ├── lib
+| | ├── app.ts
+| | ├── index.ts
+| | ├── 
 │ └── prisma/
 │ └── schema.prisma
 ├── packages/
 │ └── contracts/
 └── README.md
-
+```
 
 ### Monorepo Rationale
 
@@ -132,11 +153,10 @@ Shared contracts (Zod schemas + TypeScript types) are used across frontend and b
 ## Getting Started
 
 ### Prerequisites
-
+```
 - Node.js 18+
 - PostgreSQL (local or Neon)
-- Optional: SMTP for email invites
-
+```
 ---
 
 ### 1. Clone Repository
@@ -145,14 +165,15 @@ Shared contracts (Zod schemas + TypeScript types) are used across frontend and b
 git clone https://github.com/kiptalam1/ProjoStack.git
 cd ProjoStack
 npm install
+```
 2. Environment Variables
+```
 Backend (apps/backend/.env)
 PORT=5000
 DATABASE_URL=postgresql://user:pass@localhost:5432/projostack
-JWT_SECRET=your-secret
-JWT_EXPIRES_IN=7d
-CLIENT_URL=http://localhost:5173
-EMAIL_FROM=noreply@projostack.com
+ACCESS_SECRET=your-secret
+REFRESH_SECRET=your-secret
+```
 Frontend (apps/frontend/.env)
 VITE_API_URL=http://localhost:5000/api
 3. Database Setup
