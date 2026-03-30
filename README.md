@@ -326,7 +326,7 @@ Set DATABASE_URL in environment variables
 Adams Kiptalam
 
 - Email: [adamskiptalam0@gmail.com](mailto:adamskiptalam0@gmail.com)
-- LinkedIn: [linkedin.com/in/your-profile](https://www.linkedin.com/in/adams-kiptalam)
+- LinkedIn: [linkedin.com/in/adams-kiptalam](https://www.linkedin.com/in/adams-kiptalam)
 
 ---
 
