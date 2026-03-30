@@ -7,6 +7,23 @@ Multi-tenant web app with strict workspace isolation, role-based access control 
 
 ---
 
+Screenshots
+
+| Dashboard | Settings | Tasks |
+|----------|-------------|-----|
+| ![](./apps/web/src/assets/dashboard.png) | ![](./apps/web/src/assets/settings.png) | ![](./apps/web/src/assets/tasks.png)
+
+| Workspaces | Projects | All Tasks |
+|----------|-------------|----------|
+| ![](./apps/web/src/assets/workspaces.png) | ![](./apps/web/src/assets/projects.png) | ![](./apps/web/src/assets/alltasks.png)
+
+
+| Invites |
+|---------|
+| ![](./apps/web/src/assets/invites.png) |
+
+---
+
 ## Overview
 
 ProjoStack is a production-oriented project management platform that enables users to:
@@ -303,21 +320,6 @@ Create project
 Set DATABASE_URL in environment variables
 ```
 
-Screenshots
-
-
-| Dashboard | Invite Modal |
-|----------|-------------|
-| ![](./assets/images/dashboard.png) | ![](./assets/images/invite.png) |
-
-Feature	Preview
-Dashboard	https://screenshots/dashboard.png
-
-Invite Flow	https://screenshots/invite.png
-
-Tasks	https://screenshots/tasks.png
-
-Audit Logs	https://screenshots/audit.png
 
 ## Contact
 
