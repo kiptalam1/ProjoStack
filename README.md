@@ -1,249 +1,281 @@
-ProjoStack
+# ProjoStack
 
-Multi-tenant SaaS backend with strict workspace isolation, RBAC, and audit logging.
+Multi-tenant SaaS backend with strict workspace isolation, role-based access control (RBAC), and audit logging.
 
-Live Demo | API Docs | Database Schema
-What is this?
+**Links**  
+- Live Demo: https://projostack.onrender.com  
+- API Docs: (add link)  
+- Database Schema: (add link or point to Prisma schema)
 
-ProjoStack is a production-oriented project management platform where users can create isolated workspaces, invite team members with role-based permissions, and manage projects/tasks with full audit trails.
+---
 
-I built this to solve a real problem: most team tools either lack proper access control or make it an afterthought. Here, workspace isolation is enforced at the database level—you literally cannot see data from workspaces you don't belong to.
+## Overview
 
-Live demo is up and running. Register an account, create a workspace, invite someone (or just test with multiple browser tabs), and see how roles actually restrict what users can do.
-Tech Stack
+ProjoStack is a production-oriented project management platform that enables users to:
 
-Frontend
-React 18, TypeScript, React Router, TanStack Query, Tailwind CSS, shadcn/ui, Axios, Zod
+- Create isolated workspaces
+- Invite team members with role-based permissions
+- Manage projects and tasks
+- Track sensitive actions via audit logs
 
-Backend
-Node.js, Express, TypeScript, PostgreSQL, Prisma ORM, JWT (HTTP-only cookies), bcrypt, Zod
+The system enforces **workspace isolation at the database level**, ensuring users cannot access data outside their authorized scope.
 
-Infrastructure
-Monorepo structure (apps/ + packages/contracts), Render (static site + web service), Neon (PostgreSQL)
+---
 
-Testing
-Jest, Supertest — focused on auth boundaries and authorization logic
-How It Works
+## Core Principles
 
-The core constraint is simple but strict: every request carries a user ID and a workspace context. The server checks that the resource being accessed belongs to that workspace. If it doesn't, you get a 403. No exceptions.
+- **Strict Isolation**: Every resource is scoped to a workspace
+- **Server-Enforced RBAC**: Authorization is not delegated to the frontend
+- **Auditability**: Sensitive operations are logged and traceable
+- **Shared Contracts**: Frontend and backend share types to eliminate drift
 
-Role hierarchy:
+---
 
-    Admin — can manage members, send invites, change roles
+## Tech Stack
 
-    Member — can create/edit projects and tasks
+### Frontend
+- React 18
+- TypeScript
+- React Router
+- TanStack Query
+- Tailwind CSS
+- shadcn/ui
+- Axios
+- Zod
 
-    Viewer — read-only access
+### Backend
+- Node.js
+- Express
+- TypeScript
+- PostgreSQL
+- Prisma ORM
+- JWT (HTTP-only cookies)
+- bcrypt
+- Zod
 
-Audit logging tracks sensitive actions: member removals, role changes, and deletions. Admins can view these logs.
+### Infrastructure
+- Monorepo (apps/ + packages/contracts)
+- Render (deployment)
+- Neon (PostgreSQL)
 
-Invites use expiring tokens (hashed in the database, never stored raw) and expire after 7 days.
-Project Structure
-text
+### Testing
+- Jest
+- Supertest
+
+---
+
+## Architecture
+
+All requests operate under two constraints:
+1. **Authenticated user context**
+2. **Workspace scope**
+
+If a resource does not belong to the workspace context, the server returns `403 Forbidden`.
+
+---
+
+## Role Model
+
+| Role   | Permissions |
+|--------|------------|
+| Admin  | Manage members, invites, roles |
+| Member | Create and manage projects/tasks |
+| Viewer | Read-only access |
+
+---
+
+## Key Features
+
+| Feature | Implementation |
+|--------|----------------|
+| Workspace Isolation | Middleware + Prisma queries scoped by `workspace_id` |
+| RBAC | Enforced on all mutation endpoints |
+| Invite Flow | Token hashing, expiry, `used_at` tracking |
+| Audit Logging | Middleware + DB logging of sensitive actions |
+| Rate Limiting | Applied to auth and invite endpoints |
+| Pagination | `?page=1&limit=20&status=active` supported |
+
+---
+
+## Project Structure
+
 
 ProjoStack/
 ├── apps/
-│   ├── frontend/          # React + Vite
-│   │   ├── src/
-│   │   │   ├── components/
-│   │   │   ├── pages/
-│   │   │   ├── hooks/
-│   │   │   ├── services/  # API client with react-query
-│   │   │   └── types/
-│   │   └── package.json
-│   └── backend/           # Express + Prisma
-│       ├── src/
-│       │   ├── controllers/
-│       │   ├── middlewares/  # auth, RBAC, workspace isolation
-│       │   ├── routes/
-│       │   ├── services/
-│       │   └── utils/
-│       ├── prisma/
-│       │   └── schema.prisma
-│       └── package.json
+│ ├── frontend/
+│ │ └── src/
+│ │ ├── components/
+│ │ ├── pages/
+│ │ ├── hooks/
+│ │ ├── services/
+│ │ └── types/
+│ └── backend/
+│ ├── src/
+│ │ ├── controllers/
+│ │ ├── middlewares/
+│ │ ├── routes/
+│ │ ├── services/
+│ │ └── utils/
+│ └── prisma/
+│ └── schema.prisma
 ├── packages/
-│   └── contracts/         # Shared TypeScript types (frontend + backend)
+│ └── contracts/
 └── README.md
 
-Why monorepo? Because sharing types between frontend and backend eliminates a whole class of bugs. The contract package exports Zod schemas and TypeScript types that both sides use.
-Key Features
-Feature	Implementation
-Workspace isolation	Middleware + Prisma queries always scope by workspace_id
-RBAC	Role checks on every mutation endpoint; frontend conditionally renders UI
-Invite flow	Token hashing, expiry, used_at tracking — no stale invites
-Audit logging	Database trigger + middleware logs member changes, deletions, role updates
-Rate limiting	Applied to auth and invite endpoints to prevent abuse
-Pagination/filtering	All list endpoints support ?page=1&limit=20&status=active
-Getting Started
-Prerequisites
 
-    Node.js 18+
+### Monorepo Rationale
 
-    PostgreSQL (local or Neon)
+Shared contracts (Zod schemas + TypeScript types) are used across frontend and backend to eliminate inconsistencies and reduce runtime errors.
 
-    (Optional) SMTP for email invites — falls back to console in dev
+---
 
-1. Clone and install
-bash
+## Getting Started
 
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL (local or Neon)
+- Optional: SMTP for email invites
+
+---
+
+### 1. Clone Repository
+
+```bash
 git clone https://github.com/kiptalam1/ProjoStack.git
 cd ProjoStack
-npm install  # installs all dependencies for frontend, backend, and contracts
-
-2. Set up environment variables
-
-Backend — apps/backend/.env:
-env
-
+npm install
+2. Environment Variables
+Backend (apps/backend/.env)
 PORT=5000
-DATABASE_URL="postgresql://user:pass@localhost:5432/projostack"
-JWT_SECRET="your-secret"
-JWT_EXPIRES_IN="7d"
-CLIENT_URL="http://localhost:5173"
-EMAIL_FROM="noreply@projostack.com"
-# SMTP config optional — if not set, logs invite links to console
-
-Frontend — apps/frontend/.env:
-env
-
-VITE_API_URL="http://localhost:5000/api"
-
-3. Set up the database
-bash
-
+DATABASE_URL=postgresql://user:pass@localhost:5432/projostack
+JWT_SECRET=your-secret
+JWT_EXPIRES_IN=7d
+CLIENT_URL=http://localhost:5173
+EMAIL_FROM=noreply@projostack.com
+Frontend (apps/frontend/.env)
+VITE_API_URL=http://localhost:5000/api
+3. Database Setup
 cd apps/backend
 npx prisma generate
 npx prisma migrate dev --name init
-
-4. Run both apps
-
-From the project root:
-bash
-
-npm run dev  # runs frontend (port 5173) + backend (port 5000) concurrently
-
+4. Run Application
+npm run dev
 Frontend: http://localhost:5173
 Backend: http://localhost:5000
-API Endpoints
+API Overview
 
 All endpoints require authentication unless marked public.
-Method	Endpoint	Description	Role Required
-Auth			
-POST	/api/auth/register	Register new user	Public
+
+Auth
+Method	Endpoint	Description	Access
+POST	/api/auth/register	Register	Public
 POST	/api/auth/login	Login	Public
 POST	/api/auth/logout	Logout	Any
 GET	/api/auth/me	Current user	Any
-Workspaces			
-GET	/api/workspaces	List user's workspaces	Any
-POST	/api/workspaces	Create workspace	Any
-GET	/api/workspaces/:id	Get workspace	Must be member
+Workspaces
+Method	Endpoint	Description	Access
+GET	/api/workspaces	List	Any
+POST	/api/workspaces	Create	Any
+GET	/api/workspaces/:id	Get	Member
 PUT	/api/workspaces/:id	Update	Admin
 DELETE	/api/workspaces/:id	Delete	Admin
-Members			
-GET	/api/workspaces/:id/members	List members	Member
+Members
+Method	Endpoint	Description	Access
+GET	/api/workspaces/:id/members	List	Member
 PUT	/api/workspaces/:id/members/:userId	Update role	Admin
-DELETE	/api/workspaces/:id/members/:userId	Remove member	Admin
-Invites			
+DELETE	/api/workspaces/:id/members/:userId	Remove	Admin
+Invites
+Method	Endpoint	Description	Access
 POST	/api/workspaces/:id/invites	Send invite	Admin
-GET	/api/invites	List pending invites	Any
-POST	/api/invites/:token/accept	Accept invite	Public
-Projects & Tasks			
+GET	/api/invites	List	Any
+POST	/api/invites/:token/accept	Accept	Public
+Projects & Tasks
+Method	Endpoint	Description	Access
 GET	/api/workspaces/:id/projects	List projects	Member
 POST	/api/workspaces/:id/projects	Create project	Member
 GET	/api/projects/:id/tasks	List tasks	Member
 POST	/api/projects/:id/tasks	Create task	Member
 PUT	/api/tasks/:id	Update task	Member
 DELETE	/api/tasks/:id	Delete task	Member
-Audit			
-GET	/api/workspaces/:id/audit-logs	View audit logs	Admin
-Database Schema
+Audit Logs
+Method	Endpoint	Description	Access
+GET	/api/workspaces/:id/audit-logs	View logs	Admin
+Database Design
 
-The schema is designed around workspace isolation. Every resource (projects, tasks, memberships, invites, audit logs) belongs to a workspace.
-text
+All entities are scoped to a workspace.
 
 users
-  └── workspace_members (junction with roles)
+  └── workspace_members
         └── workspaces
               ├── projects
               │    └── tasks
               ├── invites
               └── audit_logs
+Key Constraints
+Unique (workspace_id, user_id) in workspace_members
+Invite tokens stored as token_hash
+audit_logs.meta_json for flexible metadata
 
-Key constraints:
+Full schema: apps/backend/prisma/schema.prisma
 
-    workspace_members has a unique constraint on (workspace_id, user_id)
-
-    invites stores token_hash instead of raw tokens
-
-    audit_logs stores meta_json for flexible context
-
-Full Prisma schema is in apps/backend/prisma/schema.prisma.
 Testing
-bash
-
 cd apps/backend
 npm run test
-
-Tests cover:
-
-    Auth boundaries (unauthenticated requests get 401)
-
-    Workspace isolation (user A cannot access user B's workspace)
-
-    RBAC (members can't perform admin actions)
-
-    Invite flow (accept, reject, expiry)
-
+Coverage
+Authentication boundaries (401 enforcement)
+Workspace isolation (cross-tenant access blocked)
+RBAC enforcement
+Invite lifecycle (accept, expiry, invalid cases)
 Deployment
-Backend (Render Web Service)
+Backend (Render)
 
-    Push to GitHub
+Build:
 
-    Create Web Service → connect repo
+cd apps/backend && npm install && npx prisma generate && npx prisma migrate deploy
 
-    Build command: cd apps/backend && npm install && npx prisma generate && npx prisma migrate deploy
+Start:
 
-    Start command: cd apps/backend && npm start
+cd apps/backend && npm start
+Frontend (Render)
 
-    Add env vars from .env
+Build:
 
-Frontend (Render Static Site)
+cd apps/frontend && npm install && npm run build
 
-    Create Static Site
+Publish directory:
 
-    Build command: cd apps/frontend && npm install && npm run build
-
-    Publish directory: apps/frontend/dist
-
-    Add VITE_API_URL pointing to your backend URL
-
+apps/frontend/dist
 Database (Neon)
-
-    Create a Neon project
-
-    Copy connection string to DATABASE_URL in Render environment
-
+Create project
+Set DATABASE_URL in environment variables
 Screenshots
 
-(Add your screenshots here — I'll include them when you push)
-Workspace Dashboard	Invite Modal
-https://screenshots/dashboard.png	https://screenshots/invite.png
-Task Management	Audit Logs (Admin view)
-https://screenshots/tasks.png	https://screenshots/audit.png
-What I'd Add Next
+Add screenshots after deployment:
 
-    File attachments — because tasks often need documents
+Feature	Preview
+Dashboard	https://screenshots/dashboard.png
 
-    Real-time updates — WebSocket notifications for task assignments
+Invite Flow	https://screenshots/invite.png
 
-    Soft deletes — currently hard deletes, but audit logs preserve history
+Tasks	https://screenshots/tasks.png
 
+Audit Logs	https://screenshots/audit.png
+Roadmap
+File attachments
+Real-time updates (WebSockets)
+Soft deletes with recovery
+Notification system
 Contact
 
 Adams Kiptalam
-LinkedIn · Email
 
-Project: github.com/kiptalam1/ProjoStack
-Live demo: projostack.onrender.com
+LinkedIn: (add link)
+Email: (add email)
 
-Built as a demonstration of production-ready multi-tenancy. No license — use it, learn from it, break it.
+Project: https://github.com/kiptalam1/ProjoStack
+
+Live: https://projostack.onrender.com
+
+License
+No license. Intended for learning and experimentation.
