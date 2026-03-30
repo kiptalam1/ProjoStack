@@ -175,104 +175,140 @@ ACCESS_SECRET=your-secret
 REFRESH_SECRET=your-secret
 ```
 Frontend (apps/frontend/.env)
+```
 VITE_API_URL=http://localhost:5000/api
+```
+
 3. Database Setup
+```
 cd apps/backend
 npx prisma generate
 npx prisma migrate dev --name init
+```
+
 4. Run Application
+```
 npm run dev
 Frontend: http://localhost:5173
 Backend: http://localhost:5000
+```
+
 API Overview
 
 All endpoints require authentication unless marked public.
 
-Auth
-Method	Endpoint	Description	Access
-POST	/api/auth/register	Register	Public
-POST	/api/auth/login	Login	Public
-POST	/api/auth/logout	Logout	Any
-GET	/api/auth/me	Current user	Any
-Workspaces
-Method	Endpoint	Description	Access
-GET	/api/workspaces	List	Any
-POST	/api/workspaces	Create	Any
-GET	/api/workspaces/:id	Get	Member
-PUT	/api/workspaces/:id	Update	Admin
-DELETE	/api/workspaces/:id	Delete	Admin
-Members
-Method	Endpoint	Description	Access
-GET	/api/workspaces/:id/members	List	Member
-PUT	/api/workspaces/:id/members/:userId	Update role	Admin
-DELETE	/api/workspaces/:id/members/:userId	Remove	Admin
-Invites
-Method	Endpoint	Description	Access
-POST	/api/workspaces/:id/invites	Send invite	Admin
-GET	/api/invites	List	Any
-POST	/api/invites/:token/accept	Accept	Public
-Projects & Tasks
-Method	Endpoint	Description	Access
-GET	/api/workspaces/:id/projects	List projects	Member
-POST	/api/workspaces/:id/projects	Create project	Member
-GET	/api/projects/:id/tasks	List tasks	Member
-POST	/api/projects/:id/tasks	Create task	Member
-PUT	/api/tasks/:id	Update task	Member
-DELETE	/api/tasks/:id	Delete task	Member
-Audit Logs
-Method	Endpoint	Description	Access
-GET	/api/workspaces/:id/audit-logs	View logs	Admin
-Database Design
+#### Auth:
+| Method | Endpoint |	Description |	Access |
+|--------|----------|-------------|--------|
+| POST |	/api/auth/register |	Register |	Public|
+| POST |	/api/auth/login |	Login |	Public |
+| POST |	/api/auth/logout |	Logout	 | Any |
+| GET  |	/api/auth/me	 |Current user | Any |
+
+---
+
+#### Workspaces:
+| Method |	Endpoint |	Description |	Access |
+|--------|-----------|--------------|--------|
+| GET  |	/api/workspaces	|List|	Any|
+| POST |	/api/workspaces |	Create |	Any |
+| GET  |	/api/workspaces/:id |	Get |	Member |
+| PUT  | /api/workspaces/:id |	Update |	Admin |
+| DELETE |	/api/workspaces/:id |	Delete |	Admin |
+
+---
+
+#### Members:
+| Method |	Endpoint |	Description |	Access |
+|--------|-----------|--------------|--------|
+| GET |	/api/workspaces/:id/members |	List	| Member |
+| PUT |	/api/workspaces/:id/members/:userId	| Update | role |	Admin |
+| DELETE |	/api/workspaces/:id/members/:userId |	Remove |	Admin |
+
+---
+
+#### Invites:
+| Method |	Endpoint |	Description |	Access |
+|--------|-----------|--------------|--------|
+| POST	 |/api/workspaces/:id/invites |	Send invite |	Admin |
+| GET |	/api/invites |	List |	Any |
+| POST |	/api/invites/:token/accept |	Accept |	Public |
+
+---
+
+#### Projects & Tasks:
+
+| Method | Endpoint | Description | Access |
+|--------|----------|------------|--------|
+| GET | /api/workspaces/:id/projects | List projects | Member |
+| POST | /api/workspaces/:id/projects | Create project | Member |
+| GET | /api/projects/:id/tasks | List tasks | Member |
+| POST | /api/projects/:id/tasks | Create task | Member |
+| PUT | /api/tasks/:id | Update task | Member |
+| DELETE | /api/tasks/:id | Delete task | Member |
+
+---
+
+#### Audit Logs:
+
+| Method | Endpoint | Description | Access |
+|--------|----------|------------|--------|
+| GET | /api/workspaces/:id/audit-logs | View logs | Admin |
+
 
 All entities are scoped to a workspace.
 
-users
-  └── workspace_members
-        └── workspaces
-              ├── projects
-              │    └── tasks
-              ├── invites
-              └── audit_logs
-Key Constraints
+#### Key Constraints
 Unique (workspace_id, user_id) in workspace_members
 Invite tokens stored as token_hash
 audit_logs.meta_json for flexible metadata
 
-Full schema: apps/backend/prisma/schema.prisma
+Full schema: apps/server/prisma/schema.prisma
 
-Testing
+#### Testing
+```
 cd apps/backend
 npm run test
-Coverage
+```
+
+#### Coverage
 Authentication boundaries (401 enforcement)
 Workspace isolation (cross-tenant access blocked)
 RBAC enforcement
 Invite lifecycle (accept, expiry, invalid cases)
+
 Deployment
-Backend (Render)
+` Backend (Render) `
 
 Build:
-
+```
 cd apps/backend && npm install && npx prisma generate && npx prisma migrate deploy
+```
 
 Start:
-
+```
 cd apps/backend && npm start
 Frontend (Render)
-
+```
 Build:
-
+```
 cd apps/frontend && npm install && npm run build
+```
 
 Publish directory:
-
+```
 apps/frontend/dist
 Database (Neon)
 Create project
 Set DATABASE_URL in environment variables
+```
+
 Screenshots
 
-Add screenshots after deployment:
+
+| Dashboard | Invite Modal |
+|----------|-------------|
+| ![](./assets/images/dashboard.png) | ![](./assets/images/invite.png) |
 
 Feature	Preview
 Dashboard	https://screenshots/dashboard.png
@@ -282,21 +318,19 @@ Invite Flow	https://screenshots/invite.png
 Tasks	https://screenshots/tasks.png
 
 Audit Logs	https://screenshots/audit.png
-Roadmap
-File attachments
-Real-time updates (WebSockets)
-Soft deletes with recovery
-Notification system
-Contact
+
+## Contact
 
 Adams Kiptalam
 
-LinkedIn: (add link)
-Email: (add email)
+- Email: [adamskiptalam0@gmail.com](mailto:adamskiptalam0@gmail.com)
+- LinkedIn: [linkedin.com/in/your-profile](https://www.linkedin.com/in/your-profile)
+
+---
 
 Project: https://github.com/kiptalam1/ProjoStack
 
 Live: https://projostack.onrender.com
 
 License
-No license. Intended for learning and experimentation.
+```No license. Intended for learning and experimentation.```
